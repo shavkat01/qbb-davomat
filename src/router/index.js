@@ -7,6 +7,7 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
+            meta: { requiresAuth: true, blockedUsers: [] },
             children: [
                 {
                     path: '/',
@@ -95,6 +96,16 @@ const router = createRouter({
                     component: () => import('@/views/pages/Empty.vue')
                 },
                 {
+                    path: '/pages/staffs',
+                    name: 'staffs',
+                    component: () => import('@/views/pages/staffs/Staffs.vue')
+                },
+                {
+                    path: '/pages/staff-details/:id',
+                    name: 'staff-details',
+                    component: () => import('@/views/pages/staffs/staffsDetails/[id].vue')
+                },
+                {
                     path: '/pages/crud',
                     name: 'crud',
                     component: () => import('@/views/pages/Crud.vue')
@@ -134,5 +145,38 @@ const router = createRouter({
         }
     ]
 });
+
+
+// let isChecked = false;
+
+// router.beforeEach(async (to, from, next) => {
+//     let accessToken = localStorage.getItem('accessToken');
+//     let userData = JSON.parse(localStorage.getItem('userData'));
+ 
+//     if (to.meta.blockedUsers?.length && userData) {
+//         if (to.meta.blockedUsers.includes(userData?.role?.id)) {
+//             next({ name: 'login' });
+//             return;
+//         }
+//     }
+//     if (to.matched.some(record => record.meta.requiresAuth)) {
+//         if (!accessToken) {
+//             next({ name: 'login' });
+//         } else {
+//             try {
+//                 if (!isChecked) {
+//                     await axios.get('/users/check/auth/health');
+//                     isChecked = true;
+//                 }
+//                 next();
+//             } catch (error) {
+//                 next({ name: 'login' });
+//             }
+//         }
+//     } else {
+//         next();
+//     }
+// });
+
 
 export default router;

@@ -182,6 +182,22 @@ function applyTheme(type, color) {
         updateSurfacePalette(color.palette);
     }
 }
+const savedConfig = localStorage.getItem('layoutConfig');
+if (savedConfig) {
+    const config = JSON.parse(savedConfig);
+    const surface = surfaces.value.find(item => item.name === config.surface);
+    const primary = primaryColors.value.find(item => item.name === config.primary);
+    preset.value = config.preset
+    if (surface) {
+        applyTheme('surface', surface);
+    }
+    if (primary){
+        applyTheme('primary', primary);
+    }
+    if (preset.value) {
+        onPresetChange()
+    }
+}
 
 function onPresetChange() {
     layoutConfig.preset = preset.value;

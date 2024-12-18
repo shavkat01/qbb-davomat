@@ -1,10 +1,49 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import axios from "@/service/axiosIns.js";
+import { useRouter } from 'vue-router';
 
-const email = ref('');
+const router = useRouter();
+
+onMounted(async () => {
+        if(localStorage.getItem('refreshToken') !== 'null'){
+            try{
+                await axios.post('/auth/logout');
+                localStorage.setItem('accessToken', null)
+                localStorage.setItem('refreshToken', null)
+                localStorage.setItem('userData', null);
+            }catch(e){
+                localStorage.setItem('accessToken', null)
+                localStorage.setItem('refreshToken', null)
+            }
+        }
+})
+
+
+const username = ref('');
 const password = ref('');
 const checked = ref(false);
+
+
+
+async function signIn() {
+    // submitted.value = true;
+
+    // if (username.value.length < 4) return
+    try {
+        const response = await axios.post('/auth/login', {username: username.value, password: password.value});
+        const { accessToken, refreshToken, user } = response.data;
+
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('userData', JSON.stringify(user));
+
+        router.push('/')
+    } catch (error) { 
+        // toast.add({ severity: 'error', summary: t('status'), detail: t('error'), life: 3000 });
+    }
+}
 </script>
 
 <template>
@@ -36,8 +75,8 @@ const checked = ref(false);
                     </div>
 
                     <div>
-                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
+                        <label for="username" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">username</label>
+                        <InputText id="username" type="text" placeholder="Username" class="w-full md:w-[30rem] mb-8" v-model="username" />
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
                         <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
@@ -49,7 +88,7 @@ const checked = ref(false);
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
-                        <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button label="Sign In" class="w-full" @click="signIn"></Button>
                     </div>
                 </div>
             </div>
