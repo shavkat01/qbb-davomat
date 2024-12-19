@@ -30,8 +30,13 @@ app.use(ConfirmationService);
 
 app.component('v-select', vSelect)
 
-// import { io } from 'socket.io-client';
-// const socket = io(`${import.meta.env.VITE_API_BASE_URL}`);
-// app.provide('socket', socket);
+import { io } from 'socket.io-client';
+
+const socket = io(`${import.meta.env.VITE_API_BASE_URL}`, {
+  autoConnect: false,
+});
+
+app.provide('socket', socket);
+
 
 app.mount('#app');

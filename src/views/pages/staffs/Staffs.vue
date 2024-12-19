@@ -11,6 +11,7 @@ const dt = ref();
 const staffDialog = ref(false);
 const deleteStaffDialog = ref(false);
 const deleteStaffsDialog = ref(false);
+const loading = ref(false);
 const staff = ref({
     phone_number: '',
     card_id: null,
@@ -19,6 +20,13 @@ const selectedStaffs = ref();
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
+
+
+const filter = ref({
+    status_id: null,
+    division_id: null,
+});
+
 const image = ref(null);
 const submitted = ref(false);
 const ranks = ref([]);
@@ -31,8 +39,22 @@ const isShowingFromDateToDate = ref(false);
 
 
 async function getStaffs() {
-    const staffResponse = await axios.get('/staffs/get-staffs');
+    loading.value = true;
+    let url = `/staffs/get-staffs`;
+    let params = [];
+    
+    if (filter.value.division_id) {
+        params.push(`division_id=${filter.value.division_id}`);
+    }
+    if (filter.value.status_id) {
+        params.push(`status_id=${filter.value.status_id}`);
+    }
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
+    const staffResponse = await axios.get(url);
     staffs.value = staffResponse.data;
+    loading.value = false;
 }
 
 // Add a new staff
@@ -217,17 +239,20 @@ function deleteSelectedStaffs() {
 }
 
 
+watch(()=> filter.value, ()=>{
+    getStaffs()
+}, {deep: true})
 watch(()=> staff.value.phone_number, ()=>{
     if(staff.value.phone_number && staff.value.phone_number.trim() == '+998'){
         staff.value.phone_number = null
     }
 })
 watch(()=> staff.value.status, ()=>{
-    // if(!staff.value.status || staff.value.status == 1 || staff.value.status == 7){
-    //     isShowingFromDateToDate.value = false;
-    // }else{
-    //     isShowingFromDateToDate.value = true;
-    // }
+    if(!staff.value.status || staff.value.status == 1 || staff.value.status == 7){
+        isShowingFromDateToDate.value = false;
+    }else{
+        isShowingFromDateToDate.value = true;
+    }
 })
 
 function handlePhoneMask(event) {
@@ -284,6 +309,8 @@ function getImage(img){
                 <template #start>
                     <Button label="Yangi" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
                     <Button label="O'chirish" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedStaffs || !selectedStaffs.length" />
+                    
+                    
                 </template>
 
                 <template #end>
@@ -298,6 +325,7 @@ function getImage(img){
                 @row-click="selectedProduct"
                 :paginator="true"
                 :rows="10"
+                :loading="loading"
                 :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
@@ -306,12 +334,24 @@ function getImage(img){
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
                         <h4 class="m-0">Xodimlar boshqaruvi</h4>
-                        <IconField>
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
-                            <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
-                        </IconField>
+                        <div>
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="col-span-4">
+                                    <Select v-model="filter.division_id" :options="divisions" optionLabel="name" optionValue="id" placeholder="Bo'limi" fluid showClear />
+                                </div>
+                                <div class="col-span-4">
+                                    <Select v-model="filter.status_id" :options="statusList" optionLabel="name" optionValue="id" placeholder="Holati" fluid showClear />
+                                </div>
+                                <div class="col-span-4">
+                                    <IconField>
+                                        <InputIcon>
+                                            <i class="pi pi-search" />
+                                        </InputIcon>
+                                        <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
+                                    </IconField>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </template>
 

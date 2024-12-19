@@ -1,5 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import axios from '@/service/axiosIns.js';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -147,36 +148,36 @@ const router = createRouter({
 });
 
 
-// let isChecked = false;
+let isChecked = false;
 
-// router.beforeEach(async (to, from, next) => {
-//     let accessToken = localStorage.getItem('accessToken');
-//     let userData = JSON.parse(localStorage.getItem('userData'));
+router.beforeEach(async (to, from, next) => {
+    let accessToken = localStorage.getItem('accessToken');
+    // let userData = JSON.parse(localStorage.getItem('userData'));
  
-//     if (to.meta.blockedUsers?.length && userData) {
-//         if (to.meta.blockedUsers.includes(userData?.role?.id)) {
-//             next({ name: 'login' });
-//             return;
-//         }
-//     }
-//     if (to.matched.some(record => record.meta.requiresAuth)) {
-//         if (!accessToken) {
-//             next({ name: 'login' });
-//         } else {
-//             try {
-//                 if (!isChecked) {
-//                     await axios.get('/users/check/auth/health');
-//                     isChecked = true;
-//                 }
-//                 next();
-//             } catch (error) {
-//                 next({ name: 'login' });
-//             }
-//         }
-//     } else {
-//         next();
-//     }
-// });
+    // if (to.meta.blockedUsers?.length && userData) {
+    //     if (to.meta.blockedUsers.includes(userData?.role?.id)) {
+    //         next({ name: 'login' });
+    //         return;
+    //     }
+    // }
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!accessToken) {
+            next({ name: 'login' });
+        } else {
+            try {
+                if (!isChecked) {
+                    await axios.post('/auth/verify-token');
+                    isChecked = true;
+                }
+                next();
+            } catch (error) {
+                next({ name: 'login' });
+            }
+        }
+    } else {
+        next();
+    }
+});
 
 
 export default router;
