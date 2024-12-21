@@ -123,7 +123,8 @@ function openNew() {
         phone_number: '',
         card_id: null,
         status: null,
-        photo: null
+        photo: null,
+        state_id: null,
     };
     submitted.value = false;
     staffDialog.value = true;
@@ -153,17 +154,19 @@ function saveStaff() {
         formData.append('status', staff.value.status || '');
 
         if(isShowingFromDateToDate.value){
-            formData.append('from_date', staff.value.from_date || '');
-            formData.append('to_date', staff.value.to_date || '');
-        }else{
-            formData.append('from_date', staff.value.from_date || '');
-            formData.append('to_date', staff.value.to_date || '');
+            const from_date = formatDate(staff.value.from_date)
+            const to_date = formatDate(staff.value.to_date)
+            formData.append('from_date', from_date);
+            formData.append('to_date', to_date);
         }
         
         if (image.value.files[0]) formData.append('photo', image.value.files[0]);
         
         if (staff.value.id) {
             // Update the staff with the FormData
+            if(staff.value.state_id){
+                formData.append('state_id', staff.value.state_id);
+            }
             updateStaff(staff.value.id, formData).then(() => {
                 toast.add({ severity: 'success', summary: 'Successful', detail: 'Staff Updated', life: 3000 });
                 getStaffs();
@@ -199,6 +202,7 @@ async function editStaff(staffToEdit) {
         status: parseFloat(data.data.status),
         from_date: data.data.from_date,
         to_date: data.data.to_date,
+        state_id: data.data.state_id,
         photo: data.data.photo // Convert Blob to URL for preview
     };
     staffDialog.value = true;
@@ -300,6 +304,13 @@ function exportCSV() {
 function getImage(img){
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
 }
+
+const formatDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 </script>
 
 <template>

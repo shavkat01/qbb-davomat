@@ -1,7 +1,21 @@
 <script setup>
 import { ProductService } from '@/service/ProductService';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, defineProps } from 'vue';
 
+const props = defineProps({
+    staffs: {
+        type: Array,
+        required: true
+    },
+    loading : {
+        type: Boolean,
+        default: false
+    },
+    status: {
+        type: String,
+        default: 'Рўйхат бўйича'
+    }
+});
 const products = ref(null);
 
 function formatCurrency(value) {
@@ -11,28 +25,42 @@ function formatCurrency(value) {
 onMounted(() => {
     ProductService.getProductsSmall().then((data) => (products.value = data));
 });
+
+function getImage(img){
+    return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
+}
 </script>
 
 <template>
     <div class="card">
-        <div class="font-semibold text-xl mb-4">Recent Sales</div>
-        <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-            <Column style="width: 15%" header="Image">
+        <div class="font-semibold text-xl mb-4">{{status}}</div>
+        <DataTable
+            ref="dt"
+            :value="staffs"
+            dataKey="id"
+            :paginator="true"
+            :rows="10"
+            :loading="loading"
+            :filters="filters"
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            :rowsPerPageOptions="[5, 10, 25]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs"
+        >
+
+            <template #empty>
+                <div class="text-center">
+                    Ma'lumot topilmadi
+                </div>    
+            </template>
+            <Column header="Rasm">
                 <template #body="slotProps">
-                    <img :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`" :alt="slotProps.data.image" width="50" class="shadow" />
+                    <Image :src="getImage(slotProps.data.photo)" alt="Image" width="100" preview />
                 </template>
             </Column>
-            <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-            <Column field="price" header="Price" :sortable="true" style="width: 35%">
-                <template #body="slotProps">
-                    {{ formatCurrency(slotProps.data.price) }}
-                </template>
-            </Column>
-            <Column style="width: 15%" header="View">
-                <template #body>
-                    <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                </template>
-            </Column>
+            <Column field="fullname" header="F.I.O" sortable style="min-width: 4rem"></Column>
+            <Column field="phone_number" header="Telefon" sortable style="min-width: 4rem"></Column>
+            <Column field="rank_name" header="Unvon" sortable style="min-width: 4rem"></Column>
+            <Column field="division_name" header="Bo'lim" sortable style="min-width: 4rem"></Column>
         </DataTable>
     </div>
 </template>
