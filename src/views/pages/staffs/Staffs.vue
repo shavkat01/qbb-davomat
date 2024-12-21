@@ -139,7 +139,7 @@ function saveStaff() {
     
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
-    if (staff.value.fullname?.trim() && staff.value.rank_id && staff.value.division_id && staff.value.status) {
+    if (staff.value.fullname?.trim() && staff.value.rank_id && staff.value.division_id && staff.value.status && staff.value.from_date && staff.value.to_date) {
         
         // Create a FormData object to send the data with a photo
         const formData = new FormData();
@@ -412,11 +412,15 @@ function getImage(img){
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Dan</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" fluid></DatePicker>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid></DatePicker>
+                    <small v-if="submitted && !staff.from_date" class="text-red-500">Dan is required.</small>
+
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Gacha</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" fluid></DatePicker>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid></DatePicker>
+                    <small v-if="submitted && !staff.to_date" class="text-red-500">Gacha is required.</small>
+
                 </div>
                 <div class="col-span-12">
                     <label for="photo" class="block font-bold mb-3">Rasm</label>
