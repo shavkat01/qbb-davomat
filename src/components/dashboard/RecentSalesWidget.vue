@@ -54,7 +54,7 @@ function getImage(img){
             </template>
             <Column header="Rasm">
                 <template #body="slotProps">
-                    <Image :src="getImage(slotProps.data.photo)" alt="Image" width="100" preview />
+                    <Image :src="getImage(slotProps.data.photo)" alt="Image" width="50" preview />
                 </template>
             </Column>
             <Column field="fullname" header="F.I.O" sortable style="min-width: 4rem"></Column>
