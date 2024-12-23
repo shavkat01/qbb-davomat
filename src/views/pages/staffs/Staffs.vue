@@ -140,9 +140,13 @@ function saveStaff() {
     
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
-    if(isShowingFromDateToDate.value && !staff.value.from_date && !staff.value.to_date) return
-    if (staff.value.fullname?.trim() && staff.value.rank_id && staff.value.division_id && staff.value.status) {
-        
+    if (
+        staff.value.fullname?.trim() &&
+        staff.value.rank_id &&
+        staff.value.division_id &&
+        staff.value.status &&
+        (!isShowingFromDateToDate.value || (staff.value.from_date && staff.value.to_date))
+    ) {  
         // Create a FormData object to send the data with a photo
         const formData = new FormData();
         
@@ -370,7 +374,7 @@ const formatDate = (date) => {
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
                 <Column header="Rasm">
                     <template #body="slotProps">
-                        <Image :src="getImage(slotProps.data.photo)" alt="Image" width="100" preview />
+                        <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
                 <Column field="fullname" header="F.I.O" sortable style="min-width: 12rem"></Column>
