@@ -140,7 +140,8 @@ function saveStaff() {
     
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
-    if (staff.value.fullname?.trim() && staff.value.rank_id && staff.value.division_id && staff.value.status && staff.value.from_date && staff.value.to_date) {
+    if(isShowingFromDateToDate.value && !staff.value.from_date && !staff.value.to_date) return
+    if (staff.value.fullname?.trim() && staff.value.rank_id && staff.value.division_id && staff.value.status) {
         
         // Create a FormData object to send the data with a photo
         const formData = new FormData();
