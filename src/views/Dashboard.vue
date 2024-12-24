@@ -67,7 +67,7 @@ function cardClick(params) {
 
         <div class="col-span-12 xl:col-span-6">
             <RecentSalesWidget :loading="loading" :staffs="staffs" :status="statusName"/>
-            <BestSellingWidget />
+            <!-- <BestSellingWidget /> -->
         </div>
         <div class="col-span-12 xl:col-span-6">
             <RevenueStreamWidget />
