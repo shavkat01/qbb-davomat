@@ -1,9 +1,11 @@
 <script setup>
-import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, watch } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
 import axios from '@/service/axiosIns.js';
+import { FilterMatchMode } from '@primevue/core/api';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 import { useRoute } from "vue-router";
+
+
 const route = useRoute();
 const toast = useToast();
 const dt = ref();
@@ -35,10 +37,10 @@ function exportCSV() {
 
 function selectedProduct(params) {
     console.log(params);
-    
+
 }
 
-function getImage(img){
+function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
 }
 </script>
@@ -51,19 +53,11 @@ function getImage(img){
                     <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
-            <DataTable
-                ref="dt"
-                v-model:selection="selectedProducts"
-                :value="staffs"
-                dataKey="id"
-                @row-click="selectedProduct"
-                :paginator="true"
-                :rows="10"
-                :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id"
+                @row-click="selectedProduct" :paginator="true" :rows="10" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs"
-            >
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
                         <h4 class="m-0">Xodimning davomat tarixi</h4>
@@ -77,7 +71,7 @@ function getImage(img){
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="fullname" header="F.I.O" sortable style="min-width: 12rem"></Column>
+                <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem"></Column>
                 <Column field="status" header="Holat" sortable style="min-width: 12rem"></Column>
                 <Column field="from_date" header="Dan" sortable style="min-width: 12rem"></Column>
                 <Column field="to_date" header="Gacha" sortable style="min-width: 12rem"></Column>
@@ -87,6 +81,4 @@ function getImage(img){
     </div>
 </template>
 
-<style>
-
-</style>
+<style></style>

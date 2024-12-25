@@ -1,10 +1,16 @@
 <script setup>
+import axios from '@/service/axiosIns.js';
+import { FilterMatchMode } from '@primevue/core/api';
+import { Button, Column, DataTable, Dialog, FileUpload, InputNumber, InputText, Select, Toolbar } from 'primevue';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
-import { Button, Dialog, InputText, Select, InputNumber, FileUpload, DataTable, Column, Tag, Toolbar } from 'primevue';
-import axios from '@/service/axiosIns.js';
 import { useRouter } from "vue-router";
+
+
+
+
+
+
 const router = useRouter();
 const toast = useToast();
 const dt = ref();
@@ -42,7 +48,7 @@ async function getStaffs() {
     loading.value = true;
     let url = `/staffs/get-staffs`;
     let params = [];
-    
+
     if (filter.value.division_id) {
         params.push(`division_id=${filter.value.division_id}`);
     }
@@ -137,7 +143,7 @@ function hideDialog() {
 
 function saveStaff() {
     submitted.value = true;
-    
+
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
     if (
@@ -146,10 +152,10 @@ function saveStaff() {
         staff.value.division_id &&
         staff.value.status &&
         (!isShowingFromDateToDate.value || (staff.value.from_date && staff.value.to_date))
-    ) {  
+    ) {
         // Create a FormData object to send the data with a photo
         const formData = new FormData();
-        
+
         // Append staff fields to formData
         formData.append('fullname', staff.value.fullname);
         formData.append('rank_id', staff.value.rank_id);
@@ -158,18 +164,18 @@ function saveStaff() {
         formData.append('card_id', staff.value.card_id || '');
         formData.append('status', staff.value.status || '');
 
-        if(isShowingFromDateToDate.value){
+        if (isShowingFromDateToDate.value) {
             const from_date = formatDate(staff.value.from_date)
             const to_date = formatDate(staff.value.to_date)
             formData.append('from_date', from_date);
             formData.append('to_date', to_date);
         }
-        
+
         if (image.value.files[0]) formData.append('photo', image.value.files[0]);
-        
+
         if (staff.value.id) {
             // Update the staff with the FormData
-            if(staff.value.state_id){
+            if (staff.value.state_id) {
                 formData.append('state_id', staff.value.state_id);
             }
             updateStaff(staff.value.id, formData).then(() => {
@@ -248,25 +254,25 @@ function deleteSelectedStaffs() {
 }
 
 
-watch(()=> filter.value, ()=>{
+watch(() => filter.value, () => {
     getStaffs()
-}, {deep: true})
-watch(()=> staff.value.phone_number, ()=>{
-    if(staff.value.phone_number && staff.value.phone_number.trim() == '+998'){
+}, { deep: true })
+watch(() => staff.value.phone_number, () => {
+    if (staff.value.phone_number && staff.value.phone_number.trim() == '+998') {
         staff.value.phone_number = null
     }
 })
-watch(()=> staff.value.status, ()=>{
-    if(!staff.value.status || staff.value.status == 1 || staff.value.status == 7){
+watch(() => staff.value.status, () => {
+    if (!staff.value.status || staff.value.status == 1 || staff.value.status == 7) {
         isShowingFromDateToDate.value = false;
-    }else{
+    } else {
         isShowingFromDateToDate.value = true;
     }
 })
 
 function handlePhoneMask(event) {
     let input = event.target.value.replace(/\D/g, ''); // Remove non-digits
-    
+
     // Apply the +998 prefix only once
     if (input.startsWith('998')) {
         input = input.slice(3); // Remove any extra 998 prefix
@@ -283,7 +289,7 @@ function handlePhoneMask(event) {
         formattedPhoneNumber = input.replace(/(\d{2})(\d{3})(\d{1,2})/, '$1 $2 $3'); // Third part
     } else if (input.length <= 9) {
         formattedPhoneNumber = input.replace(/(\d{2})(\d{3})(\d{2})(\d{1,2})/, '$1 $2 $3 $4'); // Fourth part
-    } else{
+    } else {
         event.target.value = ''
     }
 
@@ -300,20 +306,20 @@ function handlePhoneMask(event) {
 function selectedProduct(params) {
     console.log(params);
     router.push(`/pages/staff-details/${params.data.id}`);
-    
+
 }
 function exportCSV() {
     dt.value.exportCSV();
 }
 
-function getImage(img){
+function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
 }
 
 const formatDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!date) return '';
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
 </script>
@@ -324,39 +330,33 @@ const formatDate = (date) => {
             <Toolbar class="mb-6">
                 <template #start>
                     <Button label="Yangi" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                    <Button label="O'chirish" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedStaffs || !selectedStaffs.length" />
-                    
-                    
+                    <Button label="O'chirish" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
+                        :disabled="!selectedStaffs || !selectedStaffs.length" />
+
+
                 </template>
 
                 <template #end>
                     <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
-            <DataTable
-                ref="dt"
-                v-model:selection="selectedProducts"
-                :value="staffs"
-                dataKey="id"
-                @row-click="selectedProduct"
-                :paginator="true"
-                :rows="10"
-                :loading="loading"
-                :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id"
+                @row-click="selectedProduct" :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs"
-            >
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
                         <h4 class="m-0">Xodimlar boshqaruvi</h4>
                         <div>
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-4">
-                                    <Select v-model="filter.division_id" :options="divisions" optionLabel="name" optionValue="id" placeholder="Bo'limi" fluid showClear />
+                                    <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
+                                        optionValue="id" placeholder="Bo'limi" fluid showClear />
                                 </div>
                                 <div class="col-span-4">
-                                    <Select v-model="filter.status_id" :options="statusList" optionLabel="name" optionValue="id" placeholder="Holati" fluid showClear />
+                                    <Select v-model="filter.status_id" :options="statusList" optionLabel="name"
+                                        optionValue="id" placeholder="Holati" fluid showClear />
                                 </div>
                                 <div class="col-span-4">
                                     <IconField>
@@ -377,16 +377,17 @@ const formatDate = (date) => {
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="F.I.O" sortable style="min-width: 12rem"></Column>
-                <Column field="phone_number" header="Telefon" sortable style="min-width: 12rem"></Column>
+                <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem"></Column>
+                <Column field="phone_number" header="Телефон" sortable style="min-width: 12rem"></Column>
                 <Column field="status" header="Holat" sortable style="min-width: 12rem"></Column>
-                <Column field="rank_name" header="Unvon" sortable style="min-width: 12rem"></Column>
+                <Column field="rank_name" header="Унвон" sortable style="min-width: 12rem"></Column>
                 <Column field="division_name" header="Bo'lim" sortable style="min-width: 12rem"></Column>
                 <Column field="card_id" header="Karta" sortable style="min-width: 12rem"></Column>
                 <Column header="Amallar">
                     <template #body="slotProps">
                         <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editStaff(slotProps.data)" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteStaff(slotProps.data)" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger"
+                            @click="confirmDeleteStaff(slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -396,62 +397,75 @@ const formatDate = (date) => {
         <Dialog v-model:visible="staffDialog" header="Staff Details" :style="{ width: '750px' }" :modal="true">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
-                    <label for="fullname" class="block font-bold mb-3">F.I.O</label>
-                    <InputText id="fullname" v-model="staff.fullname" required autofocus :invalid="submitted && !staff.fullname" fluid />
+                    <label for="fullname" class="block font-bold mb-3">Ф.И.О</label>
+                    <InputText id="fullname" v-model="staff.fullname" required autofocus
+                        :invalid="submitted && !staff.fullname" fluid />
                     <small v-if="submitted && !staff.fullname" class="text-red-500">Full name is required.</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="phone" class="block font-bold mb-3">Telefon</label>
-                    <InputText id="phone" v-model="staff.phone_number" @input="handlePhoneMask" placeholder="+998 (xxx) xxx-xx-xx" fluid />
-                    <small v-if="submitted && staff.phone_number && staff.phone_number.replace(/\s/g, '').length !== 13" class="text-red-500">
+                    <label for="phone" class="block font-bold mb-3">Телефон</label>
+                    <InputText id="phone" v-model="staff.phone_number" @input="handlePhoneMask"
+                        placeholder="+998 (xxx) xxx-xx-xx" fluid />
+                    <small v-if="submitted && staff.phone_number && staff.phone_number.replace(/\s/g, '').length !== 13"
+                        class="text-red-500">
                         Please enter a valid phone number in the format +998 99 999 99 99.
                     </small>
                 </div>
                 <div class="col-span-6">
-                    <label for="rank" class="block font-bold mb-3">Unvon</label>
-                    <Select v-model="staff.rank_id" :options="ranks" optionLabel="name" optionValue="id" placeholder="Select a Rank" required fluid />
+                    <label for="rank" class="block font-bold mb-3">Унвон</label>
+                    <Select v-model="staff.rank_id" :options="ranks" optionLabel="name" optionValue="id"
+                        placeholder="Select a Rank" required fluid />
                     <small v-if="submitted && !staff.rank_id" class="text-red-500">Rank is required.</small>
                 </div>
                 <div class="col-span-6">
                     <label for="division" class="block font-bold mb-3">Bo'lim</label>
-                    <Select v-model="staff.division_id" :options="divisions" optionLabel="name" optionValue="id" placeholder="Select a Division" required fluid />
+                    <Select v-model="staff.division_id" :options="divisions" optionLabel="name" optionValue="id"
+                        placeholder="Select a Division" required fluid />
                     <small v-if="submitted && !staff.division_id" class="text-red-500">Division is required.</small>
                 </div>
                 <div class="col-span-6">
                     <label for="card_id" class="block font-bold mb-3">Karta raqami</label>
-                    <InputNumber v-model="staff.card_id" id="card_id" fluid/>
+                    <InputNumber v-model="staff.card_id" id="card_id" fluid />
                 </div>
                 <div class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Holat</label>
-                    <Select v-model="staff.status" :options="statusList" optionLabel="name" optionValue="id" placeholder="Select a Division" required fluid />
+                    <Select v-model="staff.status" :options="statusList" optionLabel="name" optionValue="id"
+                        placeholder="Select a Division" required fluid />
                     <small v-if="submitted && !staff.status" class="text-red-500">Division is required.</small>
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Dan</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid></DatePicker>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid>
+                    </DatePicker>
                     <small v-if="submitted && !staff.from_date" class="text-red-500">Dan is required.</small>
 
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Gacha</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid></DatePicker>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid>
+                    </DatePicker>
                     <small v-if="submitted && !staff.to_date" class="text-red-500">Gacha is required.</small>
 
                 </div>
                 <div class="col-span-12">
                     <label for="photo" class="block font-bold mb-3">Rasm</label>
-                    <FileUpload name="demo[]" ref="image" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*">
+                    <FileUpload name="demo[]" ref="image" @upload="onAdvancedUpload($event)" :multiple="false"
+                        accept="image/*">
                         <template #header="{ chooseCallback, clearCallback, files }">
                             <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
                                 <div class="flex gap-2">
-                                    <Button @click="chooseCallback()" icon="pi pi-images" style="width: 30px; height: 30px" rounded outlined></Button>
-                                    <Button @click="clearCallback()" icon="pi pi-times" rounded outlined style="width: 30px; height: 30px" severity="danger" :disabled="!files || files.length === 0"></Button>
+                                    <Button @click="chooseCallback()" icon="pi pi-images"
+                                        style="width: 30px; height: 30px" rounded outlined></Button>
+                                    <Button @click="clearCallback()" icon="pi pi-times" rounded outlined
+                                        style="width: 30px; height: 30px" severity="danger"
+                                        :disabled="!files || files.length === 0"></Button>
                                 </div>
                             </div>
                         </template>
                         <template #empty>
                             <div class="flex align-center justify-center flex-column">
-                                <Image v-if="staff.photo" :src="getImage(staff.photo)" alt="Image" width="200" preview />
+                                <Image v-if="staff.photo" :src="getImage(staff.photo)" alt="Image" width="200"
+                                    preview />
                             </div>
                         </template>
                     </FileUpload>
@@ -477,7 +491,8 @@ const formatDate = (date) => {
         </Dialog>
 
         <!-- Delete Selected Staff Dialog -->
-        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Confirm Deletion" :modal="true">
+        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Confirm Deletion"
+            :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
                 <span>Are you sure you want to delete the selected staffs?</span>
@@ -491,7 +506,7 @@ const formatDate = (date) => {
 </template>
 
 <style>
-    .menage-staffs .p-datatable-tbody tr{
-        cursor: pointer;
-    }
+.menage-staffs .p-datatable-tbody tr {
+    cursor: pointer;
+}
 </style>

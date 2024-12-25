@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted, inject, watch } from "vue";
 import axios from '@/service/axiosIns.js';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import { inject, onMounted, onUnmounted, ref, watch, computed } from "vue";
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -22,7 +22,7 @@ const filter = ref({
         division_id: 0,
         division_name: 'Барча',
     },
-    attendance: '2',
+    attendance: '1',
 });
 
 
@@ -68,11 +68,19 @@ async function getAttandance() {
 }
 
 async function getStaffs() {
-    if(!currentTrevoga.value?.id) return
     try {
         loading.value = true;
-        let url = `/events/get-trevoga-staffs?division_id=${currentTrevoga.value.id}&type=${filter.value.attendance}`;
-        
+        let url = `/events/get-trevoga-staffs`;
+        let params = [];
+        if (filter.value.division.division_id) {
+            params.push(`division_id=${filter.value.division.division_id}`);
+        }
+        if (filter.value.attendance) {
+            params.push(`type=${filter.value.attendance}`);
+        }
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
         const staffResponse = await axios.get(url);
         staffsAttandance.value = staffResponse.data;
         loading.value = false;
@@ -96,16 +104,44 @@ async function getTrevogaDivisions() {
     trevogaDivisions.value = res.data;
 }
 
-
-
-
-socket.on('trevoga_divisions', (m)=>{
+socket.on('current_trevoga', async (m) => {
+    if(m.status){
+        await axios.post('/events/add-trevoga', { status: true, trevoga_id: currentTrevoga.value.id })
+        getCurrentTrevoga()
+        elapsedTime.value = '';
+        trevogaStatus.value = 'not_given';
+    }else{
+        getCurrentTrevoga()
+    }
+})
+socket.on('trevoga_divisions', (m) => {
     console.log('Connected to trevoga_divisions channel', m)
     trevogaDivisions.value = m
 })
-socket.on('trevoga_staffs', (m)=>{
+socket.on('trevoga_staffs', (m) => {
     console.log('Connected to trevoga_staffs channel', m)
-    staffsAttandance.value.unshift(m[0])
+    let founderIndex = staffsAttandance.value.findIndex(item => item.division_id == m[0].division_id)
+    if(filter.value.attendance == '1' && m[0].type == '1'){
+        if(founderIndex == -1){
+            staffsAttandance.value.unshift(m[0])
+        }else{
+            staffsAttandance.value[founderIndex] = m[0]
+        }
+    }else if(filter.value.attendance == '2' && m[0].type == '2'){
+        if(founderIndex == -1){
+            staffsAttandance.value.unshift(m[0])
+        }else{
+            staffsAttandance.value[founderIndex] = m[0]
+        }
+    }else if(filter.value.attendance == '3' && m[0].type == '3'){
+        if(founderIndex){
+            staffsAttandance.value.splice(founderIndex, 1)
+        }
+    }else{
+        if(founderIndex){
+            staffsAttandance.value[founderIndex] = m[0]
+        }
+    }
 })
 
 onMounted(async () => {
@@ -124,6 +160,26 @@ onMounted(async () => {
 onUnmounted(() => {
     clearInterval(intervalId);
 });
+
+const isDarkMode = computed(() => {
+    return document.documentElement.classList.contains('app-dark');
+});
+
+const rowClass = (data) => {
+    if (isDarkMode.value) {
+        return [{
+            '!bg-[#004d004C] !text-white': data.type == 1,
+            '!bg-[#8053004C] !text-white': data.type == 2,
+            '!bg-[#7d000024] !text-white': data.type == 3,
+        }];
+    } else {
+        return [{
+            '!bg-[#007D004C] !text-dark': data.type == 1,
+            '!bg-[#FFA5004C] !text-dark': data.type == 2,
+            '!bg-[#7D00004C] !text-dark': data.type == 3,
+        }];
+    }
+};
 
 function createTrevoga(event) {
     try {
@@ -184,18 +240,13 @@ function reset(event) {
 }
 
 
-watch(()=> filter.value.attendance, ()=>{
+watch(() => filter.value, () => {
     getStaffs()
-}, {deep: true})
+}, { deep: true })
 
 function selectDivision(params) {
     filter.value.division = params
 }
-function selectAttandanceType(params) {
-    filter.value.attendance = params
-}
-
-
 
 
 function getImage(img) {
@@ -210,10 +261,10 @@ function getImage(img) {
             <div class="card">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <Button @click="createTrevoga($event)" :disabled="trevogaStatus !== 'not_given'" severity="danger"
-                        label="Submit">Trevoga berish</Button>
+                        label="Submit">Тревога бериш</Button>
                     <div v-if="trevogaStatus !== 'not_given'" class="flex items-center gap-10">
                         <h3 class="">
-                            <span class="text-xl">Trevoga berilgan vaqt:</span>
+                            <span class="text-xl">Тревога берилган вақт:</span>
                             <span class="text-xl text-gray-400 ml-3">{{ currentTrevoga?.begin_time?.split(' ')[1]}}</span>
                         </h3>
                         <div>
@@ -232,8 +283,8 @@ function getImage(img) {
                             </li>
                         </div>
                     </div>
-                    <Button v-if="trevogaStatus !== 'not_given'" @click="reset($event)" severity="orange" label="Disabled"
-                    >Qaytadan sozlash</Button>
+                    <Button v-if="trevogaStatus !== 'not_given'" @click="reset($event)" severity="orange"
+                        label="Disabled">Қайта созлаш</Button>
                     <!-- :disabled="trevogaStatus !== 'moreThanOneHour'" -->
                 </div>
             </div>
@@ -241,44 +292,8 @@ function getImage(img) {
         <div class="col-span-12 xl:col-span-6">
             <div class="card">
                 <ul class="list-none p-0 m-0 grid grid-cols-12 gap-2">
-                    <li style="margin-bottom: 0" @click="selectDivision({ division_id: 0, division_name: `Ro'yxat bo'yicha` })"
-                        :class="{ 'bg-surface-100 dark:bg-surface-800': filter.division.division_id == 0 }"
-                        class="xl:col-span-6 flex flex-col md:flex-row md:items-center md:justify-between hover:bg-surface-100 dark:hover:bg-surface-800 mb-6 px-5 py-4 rounded-xl border border-surface cursor-pointer">
-                        <div class="w-full">
-                            <div class="flex justify-between w-full">
-                                <div class="text-xl text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">
-                                    Jami Bo'limlar</div>
-                                <div class="mt-2 md:mt-0 flex items-center">
-                                    <div class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24"
-                                        style="height: 8px">
-                                        <div class="bg-orange-500 h-full" style="width: 50%"></div>
-                                    </div>
-                                    <span class="text-orange-500 ml-4 font-medium">%50</span>
-                                </div>
-                            </div>
-                            <div class="mt-1 text-muted-color flex">
-                                <div v-tooltip.top="{ value: `Ro'yxat bo'yicha`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    90
-                                </div>
-                                <div v-tooltip.top="{ value: `Vaqtida kelganlar`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    90
-                                </div>
-                                <div v-tooltip.top="{ value: `Kech qoldi`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    90
-                                </div>
-                                <div v-tooltip.top="{ value: `Kelmadi`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    90
-                                </div>
-                            </div>
-                        </div>
-
-                    </li>
                     <li v-for="item in trevogaDivisions" @click="selectDivision(item)" :key="item"
-                        :class="{ 'bg-surface-100 dark:bg-surface-800' : filter.division.division_id == item.division_id }"
+                        :class="{ 'bg-surface-100 dark:bg-surface-800': filter.division.division_id == item.division_id }"
                         style="margin-bottom: 0"
                         class="xl:col-span-6 flex flex-col md:flex-row md:items-center md:justify-between hover:bg-surface-100 dark:hover:bg-surface-800 mb-6 px-5 py-4 rounded-xl border border-surface cursor-pointer">
                         <div class="w-full">
@@ -288,26 +303,28 @@ function getImage(img) {
                                 <div class="mt-2 md:mt-0 flex items-center">
                                     <div class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24"
                                         style="height: 8px">
-                                        <div class="bg-blue-500 h-full" :style="`width: ${item.on_time_percentage.split('.')[0]}%`"></div>
+                                        <div class="bg-blue-500 h-full"
+                                            :style="`width: ${item.on_time_percentage.split('.')[0]}%`"></div>
                                     </div>
-                                    <span class="text-blue-500 ml-4 font-medium">%{{item.on_time_percentage.split('.')[0]}}</span>
+                                    <span class="text-blue-500 ml-4 font-medium">%{{
+                                        item.on_time_percentage.split('.')[0] }}</span>
                                 </div>
                             </div>
                             <div class="mt-1 text-muted-color flex">
-                                <div v-tooltip.top="{ value: `Ro'yxat bo'yicha`, showDelay: 200, hideDelay: 300 }"
+                                <div v-tooltip.top="{ value: `Рўйхат бўйича`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-12 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     {{ item.staff_total }}
                                 </div>
-                                <div v-tooltip.top="{ value: `Vaqtida kelganlar`, showDelay: 200, hideDelay: 300 }"
+                                <div v-tooltip.top="{ value: `Вақтида келганлар`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-12 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     {{ item.on_time_staff }}
                                 </div>
-                                <div v-tooltip.top="{ value: `Kech qoldi`, showDelay: 200, hideDelay: 300 }"
+                                <div v-tooltip.top="{ value: `Кеч қолганлар`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-12 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     {{ item.late_staff }}
 
                                 </div>
-                                <div v-tooltip.top="{ value: `Kelmadi`, showDelay: 200, hideDelay: 300 }"
+                                <div v-tooltip.top="{ value: `Келмади`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-12 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     {{ item.absent_staff }}
                                 </div>
@@ -326,41 +343,42 @@ function getImage(img) {
                     <div class="mt-1 text-muted-color flex">
                         <div class="card flex flex-wrap justify-center gap-2">
                             <div class="flex items-center gap-2">
-                                <RadioButton v-model="filter.attendance" inputId="ingredient1" name="pizza" value="1" />
+                                <RadioButton v-model="filter.attendance" inputId="ingredient1" name="pizza" value="0" />
                                 <label for="ingredient1"
                                     class="py-1 px-4 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Jami </label>
+                                    Жами </label>
                             </div>
                             <div class="flex items-center gap-2">
-                                <RadioButton v-model="filter.attendance" inputId="ingredient2" name="pizza" value="2" />
+                                <RadioButton v-model="filter.attendance" inputId="ingredient2" name="pizza" value="1" />
                                 <label for="ingredient2"
                                     class="py-1 px-4 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Vaqtida kelganlar </label>
+                                    Вақтида келганлар </label>
 
                             </div>
                             <div class="flex items-center gap-2">
-                                <RadioButton v-model="filter.attendance" inputId="ingredient3" name="pizza" value="3" />
+                                <RadioButton v-model="filter.attendance" inputId="ingredient3" name="pizza" value="2" />
                                 <label for="ingredient3"
                                     class="py-1 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Kech qolganlar </label>
+                                    Кеч қолганлар </label>
                             </div>
                             <div class="flex items-center gap-2">
-                                <RadioButton v-model="filter.attendance" inputId="ingredient4" name="pizza" value="4" />
+                                <RadioButton v-model="filter.attendance" inputId="ingredient4" name="pizza" value="3" />
                                 <label for="ingredient4"
                                     class="py-1 px-4 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Kelmadi </label>
+                                    Келмади </label>
                             </div>
                         </div>
                     </div>
                 </div>
-                <DataTable ref="dt" :value="staffsAttandance" dataKey="id" :paginator="true" :rows="10" :loading="loading"
+                <DataTable ref="dt" :rowClass="rowClass" :value="staffsAttandance" dataKey="id" :paginator="true" :rows="8"
+                    :loading="loading"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[5, 10, 15, 25, 50, 100]"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffsAttandance">
+                    :rowsPerPageOptions="[5,8, 10, 15, 25, 50, 100]"
+                    currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
 
                     <template #empty>
                         <div class="text-center">
-                            Ma'lumot topilmadi
+                            Маълумот топилмади
                         </div>
                     </template>
                     <Column header="Rasm">
@@ -368,9 +386,9 @@ function getImage(img) {
                             <Image :src="getImage(slotProps.data.photo)" alt="Image" style="height: 30px;" preview />
                         </template>
                     </Column>
-                    <Column field="fullname" header="F.I.O" sortable style="min-width: 4rem"></Column>
-                    <Column field="phone_number" header="Telefon" sortable style="min-width: 4rem"></Column>
-                    <Column field="rank_name" header="Unvon" sortable style="min-width: 4rem"></Column>
+                    <Column field="fullname" header="Ф.И.О" sortable style="min-width: 4rem"></Column>
+                    <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
+                    <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
                     <!-- <Column field="division_name" header="Bo'lim" sortable style="min-width: 4rem"></Column> -->
                 </DataTable>
             </div>
