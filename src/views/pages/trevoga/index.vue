@@ -120,7 +120,7 @@ socket.on('trevoga_divisions', (m) => {
 })
 socket.on('trevoga_staffs', (m) => {
     console.log('Connected to trevoga_staffs channel', m)
-    let founderIndex = staffsAttandance.value.findIndex(item => item.division_id == m[0].division_id)
+    let founderIndex = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
     if(filter.value.attendance == '1' && m[0].type == '1'){
         if(founderIndex == -1){
             staffsAttandance.value.unshift(m[0])
