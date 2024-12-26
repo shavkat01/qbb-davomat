@@ -133,11 +133,11 @@ socket.on('trevoga_staffs', (m) => {
         }else{
             staffsAttandance.value[founderIndex] = m[0]
         }
-    }else if(filter.value.attendance == '3' && m[0].type == '3'){
+    }else if(filter.value.attendance == '3' && (m[0].type == '1' || m[0].type == '2')){
         if(founderIndex){
             staffsAttandance.value.splice(founderIndex, 1)
         }
-    }else{
+    }else if(m[0].type == '1' || m[0].type == '2'){
         if(founderIndex){
             staffsAttandance.value[founderIndex] = m[0]
         }
@@ -259,6 +259,8 @@ function getImage(img) {
     <div class="grid grid-cols-12 gap-8">
         <div class="col-span-12 xl:col-span-12">
             <div class="card">
+                {{ filter.attendance }}
+
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <Button @click="createTrevoga($event)" :disabled="trevogaStatus !== 'not_given'" severity="danger"
                         label="Submit">Тревога бериш</Button>
