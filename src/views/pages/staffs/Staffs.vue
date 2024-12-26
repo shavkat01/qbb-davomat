@@ -339,7 +339,7 @@ const formatDate = (date) => {
                 </template>
             </Toolbar>
             <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id"
-                @row-click="selectedProduct" :paginator="true" :rows="10" :loading="loading" :filters="filters"
+                :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
@@ -375,7 +375,12 @@ const formatDate = (date) => {
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem"></Column>
+                <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem">
+                    <template #body="slotProps">
+                        <a @click="selectedProduct(slotProps)" class="text-blue-500">
+                            {{ slotProps.data.fullname }}
+                        </a>
+                    </template></Column>
                 <Column field="phone_number" header="Телефон" sortable style="min-width: 12rem"></Column>
                 <Column field="status" header="Ҳолат" sortable style="min-width: 12rem"></Column>
                 <Column field="rank_name" header="Унвон" sortable style="min-width: 12rem"></Column>
@@ -383,7 +388,8 @@ const formatDate = (date) => {
                 <Column field="card_id" header="Карта рақами" sortable style="min-width: 12rem"></Column>
                 <Column header="Aмаллар">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editStaff(slotProps.data)" />
+                        <Button icon="pi pi-angle-right" outlined rounded class="mr-2" @click="selectedProduct(slotProps)" />
+                        <Button icon="pi pi-pencil" outlined rounded severity="warn" class="mr-2" @click="editStaff(slotProps.data)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteStaff(slotProps.data)" />
                     </template>
