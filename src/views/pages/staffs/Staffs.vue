@@ -146,6 +146,7 @@ function saveStaff() {
 
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
+    if (staff.value.internal_number && staff.value.internal_number.trim().length !== 4) return
     if (
         staff.value.fullname?.trim() &&
         staff.value.rank_id &&
@@ -161,6 +162,8 @@ function saveStaff() {
         formData.append('rank_id', staff.value.rank_id);
         formData.append('division_id', staff.value.division_id);
         formData.append('phone_number', staff.value.phone_number.replace(/\s/g, ''));
+        if (staff.value.internal_number) formData.append('internal_number', staff.value.internal_number?.trim());
+        if (staff.value.birth_date) formData.append('birth_date', staff.value?.birth_date);
         formData.append('card_id', staff.value.card_id || '');
         formData.append('status', staff.value.status || '');
 
@@ -428,6 +431,20 @@ const formatDate = (date) => {
                     <small v-if="submitted && !staff.division_id" class="text-red-500">Division is required.</small>
                 </div>
                 <div class="col-span-6">
+                    <label for="internal_phone" class="block font-bold mb-3">Телефон</label>
+                    <InputText id="internal_phone" v-model="staff.internal_number"
+                        placeholder="xxxx" fluid />
+                    <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 4"
+                        class="text-red-500">
+                        Please enter a valid internal_phone number in the format 9999.
+                    </small>
+                </div>
+                <div class="col-span-6">
+                    <label for="birth_date" class="block font-bold mb-3">Tug'ulgan kuni</label>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.birth_date" fluid>
+                    </DatePicker>
+                </div>
+                <div class="col-span-6">
                     <label for="card_id" class="block font-bold mb-3">Карта рақами</label>
                     <InputNumber v-model="staff.card_id" id="card_id" fluid />
                 </div>
@@ -442,14 +459,12 @@ const formatDate = (date) => {
                     <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid>
                     </DatePicker>
                     <small v-if="submitted && !staff.from_date" class="text-red-500">Dan is required.</small>
-
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Гача</label>
                     <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid>
                     </DatePicker>
                     <small v-if="submitted && !staff.to_date" class="text-red-500">Gacha is required.</small>
-
                 </div>
                 <div class="col-span-12">
                     <label for="photo" class="block font-bold mb-3">Расм</label>
