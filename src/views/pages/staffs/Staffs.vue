@@ -327,6 +327,36 @@ const formatDate = (date) => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
+
+const isManualInput = ref(false); // Toggle between manual input and date picker
+const manualInput = ref(""); // Manual input string
+
+// Toggle between modes
+const toggleInputMode = () => {
+    isManualInput.value = !isManualInput.value;
+    if (!isManualInput.value && manualInput.value) {
+    handleManualInput();
+    }
+};
+
+// Handle manual date input
+const handleManualInput = () => {
+    if (!manualInput.value.trim()) return;
+
+    const parsedDate = new Date(manualInput.value);
+    if (!isNaN(parsedDate)) {
+    staff.value.birth_date = parsedDate;
+    isManualInput.value = false; // Switch back to the picker if input is valid
+    } else {
+    alert("Invalid date format. Please use yyyy-mm-dd.");
+    }
+};
+
+// Sync manual input when a date is selected
+const syncManualInput = (date) => {
+    manualInput.value = date ? date.toISOString().split("T")[0] : "";
+};
+
 </script>
 
 <template>
@@ -445,8 +475,35 @@ const formatDate = (date) => {
                 </div>
                 <div class="col-span-6">
                     <label for="birth_date" class="block font-bold mb-3">Туғулган куни</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.birth_date" fluid>
-                    </DatePicker>
+                    <!-- <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.birth_date" fluid>
+                    </DatePicker> -->
+                    <div class="relative">
+                        <input
+                            v-if="isManualInput"
+                          type="date"
+                          v-model="manualInput"
+                          placeholder="yyyy-mm-dd"
+                          class="p-inputtext p-component w-[90%]"
+                          @blur="handleManualInput"
+                          @keydown.enter="handleManualInput"
+                        />
+                        <DatePicker
+                          v-else
+                          :showIcon="true"
+                          :showButtonBar="true"
+                          v-model="staff.birth_date"
+                          @change="syncManualInput"
+                          fluid
+                          class="w-[90%]"
+                        />
+                        <button
+                          type="button"
+                          class="absolute right-2 top-1/2 -translate-y-1/2 p-link"
+                          @click="toggleInputMode"
+                        >
+                          <i :class="isManualInput ? 'pi pi-calendar' : 'pi pi-pencil'"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="col-span-6">
                     <label for="card_id" class="block font-bold mb-3">Карта рақами</label>
