@@ -214,6 +214,8 @@ async function editStaff(staffToEdit) {
         phone_number: data.data.phone_number, // Remove non-numeric characters
         card_id: data.data.card_id,
         status: parseFloat(data.data.status),
+        birth_date: data.data.birth_date,
+        internal_number: data.data.internal_number,
         from_date: data.data.from_date,
         to_date: data.data.to_date,
         state_id: data.data.state_id,
@@ -388,7 +390,7 @@ const formatDate = (date) => {
                 <Column field="status" header="Ҳолат" sortable style="min-width: 12rem"></Column>
                 <Column field="rank_name" header="Унвон" sortable style="min-width: 12rem"></Column>
                 <Column field="division_name" header="Бўлим" sortable style="min-width: 12rem"></Column>
-                <Column field="internal_number" header="Ички рақам" sortable style="min-width: 12rem"></Column>
+                <Column field="internal_number" header="Ички рақам" sortable style="min-width: 1rem"></Column>
                 <Column field="card_id" header="Карта рақами" sortable style="min-width: 12rem"></Column>
                 <Column field="birth_date" header="Туғулган куни" sortable style="min-width: 12rem"></Column>
                 <Column header="Aмаллар">
