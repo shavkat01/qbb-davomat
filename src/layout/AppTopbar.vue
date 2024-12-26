@@ -1,8 +1,10 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
-
+import { useRouter } from "vue-router";
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+
+const router = useRouter();
 </script>
 
 <template>
@@ -68,10 +70,29 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                         <i class="pi pi-inbox"></i>
                         <span>Messages</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
+                    <!-- <button type="button" class="layout-topbar-action">
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
-                    </button>
+                    </button> -->
+                    <div class="layout-config-menu">
+                        <div class="relative">
+                            <button
+                                v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
+                                type="button"
+                                class="layout-topbar-action"
+                            >
+                                <i class="pi pi-user"></i>
+                            </button>
+                            <div
+                                class="config-panel hidden absolute top-[3.25rem] right-0 w-64 p-4 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
+                            >
+                                <Button @click="router.push('/auth/login')" type="button" label="Secondary" severity="secondary" class="w-full">
+                                    <i class="pi pi-calendar"></i>
+                                    <span>Чиқиш</span>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
