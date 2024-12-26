@@ -259,8 +259,6 @@ function getImage(img) {
     <div class="grid grid-cols-12 gap-8">
         <div class="col-span-12 xl:col-span-12">
             <div class="card">
-                {{ filter.attendance }}
-
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <Button @click="createTrevoga($event)" :disabled="trevogaStatus !== 'not_given'" severity="danger"
                         label="Submit">Тревога бериш</Button>
