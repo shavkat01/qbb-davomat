@@ -163,7 +163,7 @@ function saveStaff() {
         formData.append('division_id', staff.value.division_id);
         formData.append('phone_number', staff.value.phone_number.replace(/\s/g, ''));
         if (staff.value.internal_number) formData.append('internal_number', staff.value.internal_number?.trim());
-        if (staff.value.birth_date) formData.append('birth_date', staff.value?.birth_date);
+        if (staff.value.birth_date) formData.append('birth_date', formatDate(staff.value.birth_date));
         formData.append('card_id', staff.value.card_id || '');
         formData.append('status', staff.value.status || '');
 
@@ -388,7 +388,9 @@ const formatDate = (date) => {
                 <Column field="status" header="Ҳолат" sortable style="min-width: 12rem"></Column>
                 <Column field="rank_name" header="Унвон" sortable style="min-width: 12rem"></Column>
                 <Column field="division_name" header="Бўлим" sortable style="min-width: 12rem"></Column>
+                <Column field="internal_number" header="Ички рақам" sortable style="min-width: 12rem"></Column>
                 <Column field="card_id" header="Карта рақами" sortable style="min-width: 12rem"></Column>
+                <Column field="birth_date" header="Туғулган куни" sortable style="min-width: 12rem"></Column>
                 <Column header="Aмаллар">
                     <template #body="slotProps">
                         <Button icon="pi pi-angle-right" outlined rounded class="mr-2" @click="selectedProduct(slotProps)" />
@@ -431,7 +433,7 @@ const formatDate = (date) => {
                     <small v-if="submitted && !staff.division_id" class="text-red-500">Division is required.</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="internal_phone" class="block font-bold mb-3">Телефон</label>
+                    <label for="internal_phone" class="block font-bold mb-3">Ички рақам</label>
                     <InputText id="internal_phone" v-model="staff.internal_number"
                         placeholder="xxxx" fluid />
                     <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 4"
@@ -440,7 +442,7 @@ const formatDate = (date) => {
                     </small>
                 </div>
                 <div class="col-span-6">
-                    <label for="birth_date" class="block font-bold mb-3">Tug'ulgan kuni</label>
+                    <label for="birth_date" class="block font-bold mb-3">Туғулган куни</label>
                     <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.birth_date" fluid>
                     </DatePicker>
                 </div>
