@@ -30,7 +30,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                     </g>
                 </svg> -->
 
-                <span>QBB DAVOMAT</span>
+                <span>ҚББ ДAВОМAТ</span>
             </router-link>
         </div>
 

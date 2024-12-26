@@ -329,11 +329,9 @@ const formatDate = (date) => {
         <div class="card">
             <Toolbar class="mb-6">
                 <template #start>
-                    <Button label="Yangi" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                    <Button label="O'chirish" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
+                    <Button label="Янги" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
+                    <Button label="Ўчириш" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
                         :disabled="!selectedStaffs || !selectedStaffs.length" />
-
-
                 </template>
 
                 <template #end>
@@ -347,7 +345,7 @@ const formatDate = (date) => {
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
-                        <h4 class="m-0">Xodimlar boshqaruvi</h4>
+                        <h4 class="m-0">Ходимлар бошқаруви</h4>
                         <div>
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-4">
@@ -372,18 +370,18 @@ const formatDate = (date) => {
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column header="Rasm">
+                <Column header="Расм">
                     <template #body="slotProps">
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
                 <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem"></Column>
                 <Column field="phone_number" header="Телефон" sortable style="min-width: 12rem"></Column>
-                <Column field="status" header="Holat" sortable style="min-width: 12rem"></Column>
+                <Column field="status" header="Ҳолат" sortable style="min-width: 12rem"></Column>
                 <Column field="rank_name" header="Унвон" sortable style="min-width: 12rem"></Column>
-                <Column field="division_name" header="Bo'lim" sortable style="min-width: 12rem"></Column>
-                <Column field="card_id" header="Karta" sortable style="min-width: 12rem"></Column>
-                <Column header="Amallar">
+                <Column field="division_name" header="Бўлим" sortable style="min-width: 12rem"></Column>
+                <Column field="card_id" header="Карта рақами" sortable style="min-width: 12rem"></Column>
+                <Column header="Aмаллар">
                     <template #body="slotProps">
                         <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editStaff(slotProps.data)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
@@ -394,7 +392,7 @@ const formatDate = (date) => {
         </div>
 
         <!-- Staff Dialog -->
-        <Dialog v-model:visible="staffDialog" header="Staff Details" :style="{ width: '750px' }" :modal="true">
+        <Dialog v-model:visible="staffDialog" :header="staff.id ? 'Таҳрирлаш' : 'Қўшиш'" :style="{ width: '750px' }" :modal="true">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
                     <label for="fullname" class="block font-bold mb-3">Ф.И.О</label>
@@ -418,37 +416,37 @@ const formatDate = (date) => {
                     <small v-if="submitted && !staff.rank_id" class="text-red-500">Rank is required.</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="division" class="block font-bold mb-3">Bo'lim</label>
+                    <label for="division" class="block font-bold mb-3">Бўлим</label>
                     <Select v-model="staff.division_id" :options="divisions" optionLabel="name" optionValue="id"
                         placeholder="Select a Division" required fluid />
                     <small v-if="submitted && !staff.division_id" class="text-red-500">Division is required.</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="card_id" class="block font-bold mb-3">Karta raqami</label>
+                    <label for="card_id" class="block font-bold mb-3">Карта рақами</label>
                     <InputNumber v-model="staff.card_id" id="card_id" fluid />
                 </div>
                 <div class="col-span-6">
-                    <label for="status" class="block font-bold mb-3">Holat</label>
+                    <label for="status" class="block font-bold mb-3">Ҳолат</label>
                     <Select v-model="staff.status" :options="statusList" optionLabel="name" optionValue="id"
                         placeholder="Select a Division" required fluid />
                     <small v-if="submitted && !staff.status" class="text-red-500">Division is required.</small>
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
-                    <label for="status" class="block font-bold mb-3">Dan</label>
+                    <label for="status" class="block font-bold mb-3">Дан</label>
                     <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid>
                     </DatePicker>
                     <small v-if="submitted && !staff.from_date" class="text-red-500">Dan is required.</small>
 
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
-                    <label for="status" class="block font-bold mb-3">Gacha</label>
+                    <label for="status" class="block font-bold mb-3">Гача</label>
                     <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid>
                     </DatePicker>
                     <small v-if="submitted && !staff.to_date" class="text-red-500">Gacha is required.</small>
 
                 </div>
                 <div class="col-span-12">
-                    <label for="photo" class="block font-bold mb-3">Rasm</label>
+                    <label for="photo" class="block font-bold mb-3">Расм</label>
                     <FileUpload name="demo[]" ref="image" @upload="onAdvancedUpload($event)" :multiple="false"
                         accept="image/*">
                         <template #header="{ chooseCallback, clearCallback, files }">
@@ -473,16 +471,16 @@ const formatDate = (date) => {
             </div>
 
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" @click="saveStaff" />
+                <Button label="Бекор қилиш" severity="danger" icon="pi pi-times" text @click="hideDialog" />
+                <Button label="Сақлаш" icon="pi pi-check" @click="saveStaff" />
             </template>
         </Dialog>
 
         <!-- Delete Confirmation Dialog -->
-        <Dialog v-model:visible="deleteStaffDialog" :style="{ width: '450px' }" header="Confirm Deletion" :modal="true">
+        <Dialog v-model:visible="deleteStaffDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Are you sure you want to delete {{ staff.fullname }}?</span>
+                <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteStaffDialog = false" />
@@ -491,11 +489,11 @@ const formatDate = (date) => {
         </Dialog>
 
         <!-- Delete Selected Staff Dialog -->
-        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Confirm Deletion"
+        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Тасдиқлаш"
             :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Are you sure you want to delete the selected staffs?</span>
+                <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми?</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteStaffsDialog = false" />

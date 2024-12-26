@@ -5,10 +5,10 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Home',
+        label: 'Aсосий',
         items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
-            { label: 'Trevoga', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
+            { label: 'Бош саҳифа', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: 'Тревога', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
 
         ]
     },
@@ -33,7 +33,7 @@ const model = ref([
     //     ]
     // },
     {
-        label: 'Pages',
+        label: 'Маълумотнома',
         icon: 'pi pi-fw pi-briefcase',
         to: '/pages',
         items: [
@@ -64,7 +64,7 @@ const model = ref([
             //     ]
             // },
             {
-                label: 'Xodimlar',
+                label: 'Ходимлар',
                 icon: 'pi pi-fw pi-cog',
                 to: '/pages/staffs'
             },

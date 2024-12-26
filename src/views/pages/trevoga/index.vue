@@ -106,8 +106,8 @@ async function getTrevogaDivisions() {
 
 socket.on('current_trevoga', async (m) => {
     if(m.status){
-        await axios.post('/events/add-trevoga', { status: true, trevoga_id: currentTrevoga.value.id })
         getCurrentTrevoga()
+        getTrevogaDivisions()
         elapsedTime.value = '';
         trevogaStatus.value = 'not_given';
     }else{
@@ -381,7 +381,7 @@ function getImage(img) {
                             Маълумот топилмади
                         </div>
                     </template>
-                    <Column header="Rasm">
+                    <Column header="Расм">
                         <template #body="slotProps">
                             <Image :src="getImage(slotProps.data.photo)" alt="Image" style="height: 30px;" preview />
                         </template>

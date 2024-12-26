@@ -53,7 +53,7 @@ function getImage(img) {
                     Маълумот топилмади
                 </div>
             </template>
-            <Column header="Rasm">
+            <Column header="Расм">
                 <template #body="slotProps">
                     <Image :src="getImage(slotProps.data.photo)" alt="Image" width="50" preview />
                 </template>
