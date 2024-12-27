@@ -16,6 +16,11 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
+                    path: '/attendance',
+                    name: 'attendance',
+                    component: () => import('@/views/pages/attendance/index.vue')
+                },
+                {
                     path: '/trevoga',
                     name: 'trevoga',
                     component: () => import('@/views/pages/trevoga/index.vue')
