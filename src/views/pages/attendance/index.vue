@@ -141,11 +141,11 @@ socket.on('get_attendance', (m) => {
             staffs.value.staffs.unshift(m.staffs[0])
         }
     }
-    else if (m.staffs[0].type == '1' || m.staffs[0].type == '2') {
-        if (founderIndex) {
-            staffs.value.staffs[founderIndex] = m.staffs[0]
-        }
-    }
+    // else if (m.staffs[0].type == '1' || m.staffs[0].type == '2') {
+    //     if (founderIndex) {
+    //         staffs.value.staffs[founderIndex] = m.staffs[0]
+    //     }
+    // }
 })
 
 
