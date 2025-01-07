@@ -136,6 +136,11 @@ socket.on('get_attendance', (m) => {
             staffs.value.staffs.splice(founderIndex, 1)
         }
     }
+    else if (filter.value.type == '4' && (m.staffs[0].type == '1' || m.staffs[0].type == '2')) {
+        if (founderIndex) {
+            staffs.value.staffs.unshift(m.staffs[0])
+        }
+    }
     else if (m.staffs[0].type == '1' || m.staffs[0].type == '2') {
         if (founderIndex) {
             staffs.value.staffs[founderIndex] = m.staffs[0]
