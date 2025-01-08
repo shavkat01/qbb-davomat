@@ -13,6 +13,7 @@ const divisions = ref([]);
 const statusList = ref([]);
 const attendance = ref([]);
 const staffsAttandance = ref([]);
+const staffs = ref([]);
 const statusName = ref('Рўйхат бўйича');
 const currentTrevoga = ref();
 const trevogaDivisions = ref([]);
@@ -105,15 +106,20 @@ async function getTrevogaDivisions() {
 }
 
 socket.on('get_weapons', (m) => {
-    let founderIndex = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
-    if (founderIndex !== -1) {
-        staffsAttandance.value[founderIndex].weapon_status = m[0].weapon_status
+    console.log('get_weaponsssss', m)
+    let founderIndex1 = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
+    if (founderIndex1 !== -1) {
+        staffsAttandance.value[founderIndex1].weapon_status = m[0].weapon_status
+    }
+    
+    let founderIndex2 = staffs.value.findIndex(item => item.staff_id == m[0].staff_id)
+    if (founderIndex2 !== -1) {
         trevogaDivisions.value.forEach(item => {
-            if(item.division_id == staffsAttandance.value[founderIndex].division_id){
+            if(item.division_id == staffs.value[founderIndex2].division_id){
                 if(m[0].weapon_status == false){
-                    item.weapon_total = parseFloat(item.weapon_total.split('.')[0]) + 1
+                    item.weapon_total = typeof item.weapon_total == 'string' ? parseFloat(item.weapon_total.split('.')[0]) + 1 : item.weapon_total + 1
                 }else if(m[0].weapon_status == true){
-                    item.weapon_total = item.weapon_total.split('.')[0] == 0 ? 0 : parseFloat(item.weapon_total.split('.')[0]) - 1
+                    item.weapon_total = typeof item.weapon_total == 'string' ? item.weapon_total.split('.')[0] == 0 ? 0 : parseFloat(item.weapon_total.split('.')[0]) - 1 : item.weapon_total == 0 ? 0 : item.weapon_total - 1
                 }
             }
         })
@@ -165,9 +171,10 @@ onMounted(async () => {
         getCurrentTrevoga()
         getTrevogaDivisions()
         getAttandance();
-
         const divisionResponse = await getDivisions();
         divisions.value = divisionResponse.data;
+        const res = await axios.get('/events/get-trevoga-staffs')
+        staffs.value = res.data;
 
     } catch (error) {
     }
@@ -348,7 +355,7 @@ function getImage(img) {
                                 </div>
                                 <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-700 text-white rounded-lg shrink-0 cursor-pointer">
-                                    {{ item.weapon_total.split('.')[0] }}
+                                    {{ typeof item.weapon_total == "string" ? item.weapon_total.split('.')[0] : item.weapon_total }}
                                 </div>
                             </div>
                         </div>
