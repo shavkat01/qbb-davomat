@@ -97,6 +97,13 @@ watch(() => filter.value, () => {
 }, { deep: true })
 
 
+socket.on('get_weapons', (m) => {
+    console.log('Connected to get_weapons channel', m)
+    let founderIndex = staffs.value.staffs.findIndex(item => item.staff_id == m[0].staff_id)
+    if (founderIndex !== -1) {
+        staffs.value.staffs[founderIndex].weapon_status = m[0].weapon_status
+    }
+})
 socket.on('get_attendance', (m) => {
     console.log('Connected to get_attendance channel', m)
     staffs.value.all_staffs = m.all_staffs
@@ -107,17 +114,10 @@ socket.on('get_attendance', (m) => {
     staffs.value.binoda_emas_staff = m.binoda_emas_staff
 
     let founderIndex = staffs.value.staffs.findIndex(item => item.staff_id == m.staffs[0].staff_id)
-    if (filter.value.division_id != m.staffs[0].division_id) return
-    if (filter.value.status_id != m.staffs[0].status_id) return
+    if (filter.value.division_id && filter.value.division_id != m.staffs[0].division_id) return
+    if (filter.value.status_id && filter.value.status_id != m.staffs[0].status_id) return
 
-    if (!filter.value.type) {
-        if (founderIndex == -1) {
-            staffs.value.staffs.unshift(m.staffs[0])
-        } else {
-            staffs.value.staffs[founderIndex] = m.staffs[0]
-        }
-    }
-    else if (filter.value.type == '1' && m.staffs[0].type == '1') {
+    if (filter.value.type == '1' && m.staffs[0].type == '1') {
         if (founderIndex == -1) {
             staffs.value.staffs.unshift(m.staffs[0])
         } else {
@@ -136,16 +136,11 @@ socket.on('get_attendance', (m) => {
             staffs.value.staffs.splice(founderIndex, 1)
         }
     }
-    else if (filter.value.type == '4' && (m.staffs[0].type == '1' || m.staffs[0].type == '2')) {
+    else if (m.staffs[0].type == '1' || m.staffs[0].type == '2') {
         if (founderIndex) {
-            staffs.value.staffs.unshift(m.staffs[0])
+            staffs.value.staffs[founderIndex] = m.staffs[0]
         }
     }
-    // else if (m.staffs[0].type == '1' || m.staffs[0].type == '2') {
-    //     if (founderIndex) {
-    //         staffs.value.staffs[founderIndex] = m.staffs[0]
-    //     }
-    // }
 })
 
 
@@ -160,14 +155,12 @@ const rowClass = (data) => {
             '!bg-[#004d004C] !text-white': data.type == 1,
             '!bg-[#8053004C] !text-white': data.type == 2,
             '!bg-[#7d000024] !text-white': data.type == 3,
-            '!bg-[#004d004C] !text-white': data.type == 4,
         }];
     } else {
         return [{
             '!bg-[#007D004C] !text-dark': data.type == 1,
             '!bg-[#FFA5004C] !text-dark': data.type == 2,
             '!bg-[#7D00004C] !text-dark': data.type == 3,
-            '!bg-[#007D004C] !text-dark': data.type == 4,
         }];
     }
 };
@@ -196,10 +189,10 @@ function getImage(img) {
                                     <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
                                         optionValue="id" placeholder="Bo'limi" fluid showClear />
                                 </div>
-                                <div class="col-span-3">
+                                <!-- <div class="col-span-3">
                                     <Select v-model="filter.status_id" :options="statusList" optionLabel="name"
                                         optionValue="id" placeholder="Holati" fluid showClear />
-                                </div>
+                                </div> -->
                                 <div class="col-span-3">
                                     <Select v-model="filter.type" :options="typeList" optionLabel="name"
                                         optionValue="id" placeholder="Holati" fluid showClear />
@@ -227,9 +220,35 @@ function getImage(img) {
                         {{ slotProps.data.fullname }}
                     </template></Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
-                <Column field="attendance_status" header="Ҳолат" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
-                <Column field="type" header="type" sortable></Column>
+                <Column field="is_here" header="Қаерда" sortable>
+                    <template #body="slotProps">
+                        <div v-if="slotProps.data.is_here"
+                            class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                            <i class="pi pi-sign-in"></i>
+                        </div>
+                        <div v-else-if="slotProps.data.is_here == false"
+                            class="w-12 h-9 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                            <i class="pi pi-sign-out"></i>
+                        </div>
+                        <div v-else-if="slotProps.data.is_here == null"
+                            class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-900 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                            <i class="pi pi-home"></i>
+                        </div>
+                    </template>
+                </Column>
+                <Column field="type" header="Қуролланган" sortable>
+                    <template #body="slotProps">
+                        <div v-if="slotProps.data.weapon_status == false"
+                            class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                            <i class="pi pi-check"></i>
+                        </div>
+                        <div v-else
+                            class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                            <i class="pi pi-times"></i>
+                        </div>
+                    </template>
+                </Column>
                 
                 <ColumnGroup type="footer">
                     <Row>
@@ -248,7 +267,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="2">
+                        <Column colspan="3">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
@@ -281,7 +300,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="2">
+                        <Column colspan="3">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
@@ -289,7 +308,7 @@ function getImage(img) {
                                             Бинода:
                                         </h3>
                                         <div
-                                            class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                            class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                             {{ staffs?.binoda_staff?.count }}
                                         </div>
                                     </div>
@@ -298,7 +317,7 @@ function getImage(img) {
                                             Бинода эмас:
                                         </h3>
                                         <div
-                                            class="w-12 h-9 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                            class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                             {{ staffs?.binoda_emas_staff?.count }}
                                         </div>
                                     </div>

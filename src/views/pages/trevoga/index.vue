@@ -104,6 +104,22 @@ async function getTrevogaDivisions() {
     trevogaDivisions.value = res.data;
 }
 
+socket.on('get_weapons', (m) => {
+    let founderIndex = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
+    if (founderIndex !== -1) {
+        staffsAttandance.value[founderIndex].weapon_status = m[0].weapon_status
+        trevogaDivisions.value.forEach(item => {
+            if(item.division_id == staffsAttandance.value[founderIndex].division_id){
+                if(m[0].weapon_status == false){
+                    item.weapon_total = parseFloat(item.weapon_total.split('.')[0]) + 1
+                }else if(m[0].weapon_status == true){
+                    item.weapon_total = item.weapon_total.split('.')[0] == 0 ? 0 : parseFloat(item.weapon_total.split('.')[0]) - 1
+                }
+            }
+        })
+    }
+})
+
 socket.on('current_trevoga', async (m) => {
     if(m.status){
         getCurrentTrevoga()
@@ -310,23 +326,29 @@ function getImage(img) {
                                         item.on_time_percentage.split('.')[0] }}</span>
                                 </div>
                             </div>
-                            <div class="mt-1 text-muted-color flex">
+                            <div class="mt-2 flex flex-wrap justify-around">
                                 <div v-tooltip.top="{ value: `Рўйхат бўйича`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    class="w-12 h-9 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg shrink-0 cursor-pointer">
                                     {{ item.staff_total }}
                                 </div>
-                                <div v-tooltip.top="{ value: `Вақтида келганлар`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    {{ item.on_time_staff }}
-                                </div>
-                                <div v-tooltip.top="{ value: `Кеч қолганлар`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    {{ item.late_staff }}
+                                <div class="gap-2 text-muted-color flex flex-wrap">
+                                    <div v-tooltip.top="{ value: `Вақтида келганлар`, showDelay: 200, hideDelay: 300 }"
+                                        class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                        {{ item.on_time_staff }}
+                                    </div>
+                                    <div v-tooltip.top="{ value: `Кеч қолганлар`, showDelay: 200, hideDelay: 300 }"
+                                        class="w-12 h-9 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                        {{ item.late_staff }}
 
+                                    </div>
+                                    <div v-tooltip.top="{ value: `Келмади`, showDelay: 200, hideDelay: 300 }"
+                                        class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                        {{ item.absent_staff }}
+                                    </div>
                                 </div>
-                                <div v-tooltip.top="{ value: `Келмади`, showDelay: 200, hideDelay: 300 }"
-                                    class="w-12 h-12 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    {{ item.absent_staff }}
+                                <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
+                                    class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-700 text-white rounded-lg shrink-0 cursor-pointer">
+                                    {{ item.weapon_total.split('.')[0] }}
                                 </div>
                             </div>
                         </div>
@@ -389,6 +411,18 @@ function getImage(img) {
                     <Column field="fullname" header="Ф.И.О" sortable style="min-width: 4rem"></Column>
                     <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
                     <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
+                    <Column field="type" header="Қуролланган" sortable>
+                        <template #body="slotProps">
+                            <div v-if="slotProps.data.weapon_status == false"
+                                class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-check"></i>
+                            </div>
+                            <div v-else
+                                class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-times"></i>
+                            </div>
+                        </template>
+                    </Column>
                     <!-- <Column field="division_name" header="Bo'lim" sortable style="min-width: 4rem"></Column> -->
                 </DataTable>
             </div>

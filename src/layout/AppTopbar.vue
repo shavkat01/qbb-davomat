@@ -1,6 +1,8 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+
 import AppConfigurator from './AppConfigurator.vue';
+import SnowFalling from '@/components/SnowFalling.vue';
 import { useRouter } from "vue-router";
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 
@@ -38,6 +40,7 @@ const router = useRouter();
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
+                <!-- <screen-recorder/> -->
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>
