@@ -16,19 +16,21 @@ function clickCard(item) {
 
 </script>
 <template>
-    <div v-for="item in attendance" class="col-span-12 lg:col-span-6 xl:col-span-3">
-        <div class="card cursor-pointer mb-0" @click="clickCard(item)">
-            <div class="flex justify-between">
-                <div>
-                    <span class="block text-muted-color font-medium mb-4"> {{ item.name }} </span>
-                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{item.value}}</div>
+    <div class="grid grid-cols-12 gap-4">
+        <div v-for="item in attendance" class="col-span-6 lg:col-span-6 xl:col-span-6">
+            <div class="card cursor-pointer mb-0" @click="clickCard(item)">
+                <div class="flex justify-between">
+                    <div>
+                        <span class="block text-muted-color font-medium mb-4"> {{ item.name }} </span>
+                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{item.value}}</div>
+                    </div>
+                    <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-user text-blue-500 !text-xl"></i>
+                    </div>
                 </div>
-                <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                    <i class="pi pi-user text-blue-500 !text-xl"></i>
-                </div>
+                <!-- <span class="text-primary font-medium">24 new </span>
+                <span class="text-muted-color">since last visit</span> -->
             </div>
-            <!-- <span class="text-primary font-medium">24 new </span>
-            <span class="text-muted-color">since last visit</span> -->
         </div>
     </div>
 </template>

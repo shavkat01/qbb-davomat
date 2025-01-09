@@ -447,8 +447,8 @@ const syncManualInput = (date) => {
                 <div class="col-span-6">
                     <label for="fullname" class="block font-bold mb-3">Ф.И.О</label>
                     <InputText id="fullname" v-model="staff.fullname" required autofocus
-                        :invalid="submitted && !staff.fullname" fluid />
-                    <small v-if="submitted && !staff.fullname" class="text-red-500">Full name is required.</small>
+                        :invalid="submitted && !staff.fullname" fluid  placeholder="Киритинг"/>
+                    <small v-if="submitted && !staff.fullname" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-6">
                     <label for="phone" class="block font-bold mb-3">Телефон</label>
@@ -456,20 +456,20 @@ const syncManualInput = (date) => {
                         placeholder="+998 (xxx) xxx-xx-xx" fluid />
                     <small v-if="submitted && staff.phone_number && staff.phone_number.replace(/\s/g, '').length !== 13"
                         class="text-red-500">
-                        Please enter a valid phone number in the format +998 99 999 99 99.
+                        Формат +998 99 999 99 99.
                     </small>
                 </div>
                 <div class="col-span-6">
                     <label for="rank" class="block font-bold mb-3">Унвон</label>
                     <Select v-model="staff.rank_id" :options="ranks" optionLabel="name" optionValue="id"
-                        placeholder="Select a Rank" required fluid />
-                    <small v-if="submitted && !staff.rank_id" class="text-red-500">Rank is required.</small>
+                        placeholder="Танланг" required fluid />
+                    <small v-if="submitted && !staff.rank_id" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-6">
                     <label for="division" class="block font-bold mb-3">Бўлим</label>
                     <Select v-model="staff.division_id" :options="divisions" optionLabel="name" optionValue="id"
-                        placeholder="Select a Division" required fluid />
-                    <small v-if="submitted && !staff.division_id" class="text-red-500">Division is required.</small>
+                        placeholder="Танланг" required fluid />
+                    <small v-if="submitted && !staff.division_id" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-6">
                     <label for="internal_phone" class="block font-bold mb-3">Ички рақам</label>
@@ -477,7 +477,7 @@ const syncManualInput = (date) => {
                         placeholder="xxxx" fluid />
                     <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 4"
                         class="text-red-500">
-                        Please enter a valid internal_phone number in the format 9999.
+                        Формат 9999.
                     </small>
                 </div>
                 <div class="col-span-6">
@@ -486,7 +486,7 @@ const syncManualInput = (date) => {
                     </DatePicker> -->
                     <div class="relative">
                         <input
-                            v-if="isManualInput"
+                          v-if="isManualInput"
                           type="date"
                           v-model="manualInput"
                           placeholder="yyyy-mm-dd"
@@ -502,6 +502,7 @@ const syncManualInput = (date) => {
                           @change="syncManualInput"
                           fluid
                           class="w-[90%]"
+                          placeholder="Танланг"
                         />
                         <button
                           type="button"
@@ -514,29 +515,29 @@ const syncManualInput = (date) => {
                 </div>
                 <div class="col-span-6">
                     <label for="face_id" class="block font-bold mb-3">FACE ID</label>
-                    <InputNumber v-model="staff.face_id" id="face_id" fluid />
+                    <InputNumber v-model="staff.face_id" id="face_id" fluid placeholder="Киритинг"/>
                 </div>
                 <div class="col-span-6">
                     <label for="card_id" class="block font-bold mb-3">Карта рақами</label>
-                    <InputNumber v-model="staff.card_id" id="card_id" fluid />
+                    <InputNumber v-model="staff.card_id" id="card_id" fluid placeholder="Киритинг"/>
                 </div>
                 <div class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Ҳолат</label>
                     <Select v-model="staff.status" :options="statusList" optionLabel="name" optionValue="id"
-                        placeholder="Select a Division" required fluid />
-                    <small v-if="submitted && !staff.status" class="text-red-500">Division is required.</small>
+                        placeholder="Танланг" required fluid />
+                    <small v-if="submitted && !staff.status" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Дан</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid placeholder="Танланг">
                     </DatePicker>
-                    <small v-if="submitted && !staff.from_date" class="text-red-500">Dan is required.</small>
+                    <small v-if="submitted && !staff.from_date" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Гача</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid>
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid placeholder="Танланг">
                     </DatePicker>
-                    <small v-if="submitted && !staff.to_date" class="text-red-500">Gacha is required.</small>
+                    <small v-if="submitted && !staff.to_date" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-12">
                     <label for="photo" class="block font-bold mb-3">Расм</label>

@@ -56,24 +56,24 @@ async function signIn() {
                         <div class="flex justify-center mb-2">
                             <img src="/public/logo.png" width="60" alt="">
                         </div>
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Xush kelibsiz!</div>
-                        <span class="text-muted-color font-medium">Iltimos davom ettirish uchun dasturga kiring</span>
+                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Хуш келибсиз!</div>
+                        <span class="text-muted-color font-medium">Илтимос давом эттириш учун дастурга киринг</span>
                     </div>
 
                     <div>
-                        <label for="username" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Foydalanuvchi</label>
-                        <InputText id="username" type="text" placeholder="Username" class="w-full md:w-[30rem] mb-8" v-model="username" />
+                        <label for="username" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Фойдаланувчи</label>
+                        <InputText id="username" type="text" placeholder="Киритиш" class="w-full md:w-[30rem] mb-8" v-model="username" />
 
-                        <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Parol</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
+                        <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Парол</label>
+                        <Password id="password1" v-model="password" placeholder="Киритиш" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Eslab qolish</label>
+                                <label for="rememberme1">Эслаб қолиш</label>
                             </div>
                         </div>
-                        <Button label="Sign In" class="w-full" @click="signIn"></Button>
+                        <Button label="Кириш" class="w-full" @click="signIn"></Button>
                     </div>
                 </div>
             </div>

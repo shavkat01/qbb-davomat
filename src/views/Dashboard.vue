@@ -63,15 +63,15 @@ function cardClick(params) {
 
 <template>
     <div class="grid grid-cols-12 gap-8">
-        <StatsWidget :attendance="attendance" @cardClicked="cardClick"/>
-
+        <div class="col-span-12 xl:col-span-6">
+            <StatsWidget :attendance="attendance" @cardClicked="cardClick"/>
+            <RevenueStreamWidget class="mt-4"/>
+        </div>
         <div class="col-span-12 xl:col-span-6">
             <RecentSalesWidget :loading="loading" :staffs="staffs" :status="statusName"/>
             <!-- <BestSellingWidget /> -->
         </div>
         <div class="col-span-12 xl:col-span-6">
-            <RevenueStreamWidget />
-            <NotificationsWidget />
         </div>
     </div>
 </template>
