@@ -145,6 +145,11 @@ socket.on('get_attendance', (m) => {
 
 
 
+const withWeapon = computed(() => {
+    if(staffs.value?.staffs){
+        return staffs.value?.staffs?.filter(item => item.weapon_status == false).length || 0;
+    }
+});
 const isDarkMode = computed(() => {
     return document.documentElement.classList.contains('app-dark');
 });
@@ -175,8 +180,8 @@ function getImage(img) {
 <template>
     <div class="menage-staffs">
         <div class="card">
-            <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs.staffs" dataKey="id"
-                :paginator="true" :rows="10" :loading="loading" :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs.staffs"
+                dataKey="id" :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5,8, 10, 15, 25, 50, 100]"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
@@ -218,7 +223,8 @@ function getImage(img) {
                 <Column field="fullname" header="Ф.И.О" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.fullname }}
-                    </template></Column>
+                    </template>
+                </Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
                 <Column field="is_here" header="Қаерда" sortable>
@@ -239,17 +245,19 @@ function getImage(img) {
                 </Column>
                 <Column field="type" header="Қуролланган" sortable>
                     <template #body="slotProps">
-                        <div v-if="slotProps.data.weapon_status == false"
-                            class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                            <i class="pi pi-check"></i>
-                        </div>
-                        <div v-else
-                            class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                            <i class="pi pi-times"></i>
+                        <div class="flex items-center justify-center w-28">
+                            <div v-if="slotProps.data.weapon_status == false"
+                                class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-check"></i>
+                            </div>
+                            <div v-else
+                                class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-times"></i>
+                            </div>
                         </div>
                     </template>
                 </Column>
-                
+
                 <ColumnGroup type="footer">
                     <Row>
                         <Column colspan="1">
@@ -267,7 +275,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="3">
+                        <Column colspan="2">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
@@ -300,7 +308,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="3">
+                        <Column colspan="2">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
@@ -321,6 +329,22 @@ function getImage(img) {
                                             {{ staffs?.binoda_emas_staff?.count }}
                                         </div>
                                     </div>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column colspan="1">
+                            <template #footer="slotProps">
+                                <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
+                                    <div class="flex items-center gap-3">
+                                        <h3>
+                                            Қуролланган:
+                                        </h3>
+                                        <div
+                                            class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                            {{ withWeapon }}
+                                        </div>
+                                    </div>
+
                                 </div>
                             </template>
                         </Column>

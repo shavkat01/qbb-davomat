@@ -221,6 +221,13 @@ function createTrevoga(event) {
             accept: async () => {
                 await axios.post('/events/add-trevoga', { status: false })
                 getCurrentTrevoga()
+                getTrevogaDivisions()
+                getAttandance();
+                const divisionResponse = await getDivisions();
+                divisions.value = divisionResponse.data;
+                const res = await axios.get('/events/get-trevoga-staffs')
+                staffs.value = res.data;
+                
                 toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
             },
             reject: () => {
@@ -312,7 +319,7 @@ function getImage(img) {
                 </div>
             </div>
         </div>
-        <div class="col-span-12 xl:col-span-6">
+        <div v-if="trevogaStatus !== 'not_given'" class="col-span-12 xl:col-span-6">
             <div class="card">
                 <ul class="list-none p-0 m-0 grid grid-cols-12 gap-2">
                     <li v-for="item in trevogaDivisions" @click="selectDivision(item)" :key="item"
@@ -363,7 +370,7 @@ function getImage(img) {
                 </ul>
             </div>
         </div>
-        <div class="col-span-12 xl:col-span-6">
+        <div v-if="trevogaStatus !== 'not_given'" class="col-span-12 xl:col-span-6">
             <div class="card">
                 <div class="flex items-center">
                     <div class="font-semibold text-xl">
@@ -434,6 +441,7 @@ function getImage(img) {
                 </DataTable>
             </div>
         </div>
+        
     </div>
     <Toast />
     <ConfirmPopup></ConfirmPopup>
