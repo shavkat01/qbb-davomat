@@ -36,7 +36,7 @@ function setChartData() {
                         }
                     }).length
                 }),
-                barThickness: 32
+                barThickness: 32,
             },
             {
                 type: 'bar',
@@ -148,7 +148,7 @@ onMounted(async () => {
 
 <template>
     <div class="card">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
-        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-60" />
+        <div class="font-semibold text-xl mb-4">Бугунги кунлилк давомат</div>
+        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-96" />
     </div>
 </template>
