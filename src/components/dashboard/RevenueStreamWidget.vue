@@ -1,70 +1,78 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { onMounted, ref, watch, inject } from 'vue';
+import { onMounted, ref, watch, inject, computed } from 'vue';
 import axios from '@/service/axiosIns.js';
-import {useBasicStore} from '@/store/basic'
+import { useBasicStore } from '@/store/basic';
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
-const store = useBasicStore()
+const store = useBasicStore();
 const socket = inject('socket');
 
 const chartData = ref(null);
 const chartOptions = ref(null);
 const divisions = ref(null);
-const staffs = ref({staffs : []});
+const staffs = ref({ staffs: [] });
+const isDarkMode = computed(() => document.documentElement.classList.contains('app-dark'));
+
+// Define background colors dynamically
+function getBackgroundColor(type) {
+    if (isDarkMode.value) {
+        if (type === 1) return 'rgba(0, 77, 0, 0.7)'; // Dark green
+        if (type === 2) return 'rgba(128, 83, 0, 0.7)'; // Dark orange
+        if (type === 3) return 'rgba(125, 0, 0, 0.7)'; // Dark red
+    } else {
+        if (type === 1) return 'rgba(0, 125, 0, 0.7)'; // Bright green
+        if (type === 2) return 'rgba(255, 165, 0, 0.7)'; // Bright orange
+        if (type === 3) return 'rgba(125, 0, 0, 0.7)'; // Dark red
+    }
+    return 'rgba(0, 0, 0, 0.7)'; // Default color
+}
 
 function setChartData() {
-    const documentStyle = getComputedStyle(document.documentElement);
-    if(!divisions.value) return
+    if (!divisions.value) return;
 
     return {
-        labels: divisions.value.map(item => item.name),
+        labels: divisions.value.map((item) => item.name),
         datasets: [
             {
                 type: 'bar',
                 label: 'Келмади',
-                backgroundColor: documentStyle.getPropertyValue('--p-red-500'),
-                data: divisions.value.map(element => {
-                    return staffs.value.staffs.filter(item => {
-                        if(item.type == 3 && element.id == item.division_id){
-                           return item
-                        }
-                    }).length
+                backgroundColor: divisions.value.map(() => getBackgroundColor(3)),
+                data: divisions.value.map((element) => {
+                    return staffs.value.staffs.filter(
+                        (item) => item.type === 3 && element.id === item.division_id
+                    ).length;
                 }),
                 barThickness: 32,
             },
             {
                 type: 'bar',
                 label: 'Кеч қолди',
-                backgroundColor: documentStyle.getPropertyValue('--p-yellow-500'),
-                data: divisions.value.map(element => {
-                    return staffs.value.staffs.filter(item => {
-                        if(item.type == 1 && element.id == item.division_id){
-                           return item
-                        }
-                    }).length
+                backgroundColor: divisions.value.map(() => getBackgroundColor(2)),
+                data: divisions.value.map((element) => {
+                    return staffs.value.staffs.filter(
+                        (item) => item.type === 2 && element.id === item.division_id
+                    ).length;
                 }),
-                barThickness: 32
+                barThickness: 32,
             },
             {
                 type: 'bar',
                 label: 'Вақтида келди',
-                backgroundColor: documentStyle.getPropertyValue('--p-green-500'),
-                data: divisions.value.map(element => {
-                    return staffs.value.staffs.filter(item => {
-                        if(item.type == 1 && element.id == item.division_id){
-                           return item
-                        }
-                    }).length
+                backgroundColor: divisions.value.map(() => getBackgroundColor(1)),
+                data: divisions.value.map((element) => {
+                    return staffs.value.staffs.filter(
+                        (item) => item.type === 1 && element.id === item.division_id
+                    ).length;
                 }),
                 borderRadius: {
                     topLeft: 8,
-                    topRight: 8
+                    topRight: 8,
                 },
                 borderSkipped: true,
-                barThickness: 32
-            }
-        ]
+                barThickness: 32,
+            },
+        ],
     };
 }
 
@@ -72,14 +80,13 @@ function setChartOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     const borderColor = documentStyle.getPropertyValue('--surface-border');
     const textMutedColor = documentStyle.getPropertyValue('--text-color');
-
     return {
         maintainAspectRatio: false,
         aspectRatio: 0.8,
         plugins: {
             legend: {
                 labels: {
-                    color: textMutedColor
+                    color: textMutedColor,
                 },
             },
         },
@@ -87,7 +94,7 @@ function setChartOptions() {
             x: {
                 stacked: true,
                 ticks: {
-                    color: textMutedColor
+                    color: textMutedColor,
                 },
                 grid: {
                     color: 'transparent',
@@ -97,52 +104,52 @@ function setChartOptions() {
             y: {
                 stacked: true,
                 ticks: {
-                    color: textMutedColor
+                    color: textMutedColor,
                 },
                 grid: {
                     color: borderColor,
                     borderColor: 'transparent',
                     drawTicks: false
                 }
-            }
-        }
+            },
+        },
     };
 }
-function getDivisions() {
+
+// Fetch divisions
+async function getDivisions() {
     return axios.get('/references/get-divisions');
 }
-watch([getPrimary, getSurface, isDarkTheme], () => {
+
+// Fetch staffs
+async function getStaffs() {
+    const staffResponse = await axios.get(`/events/get-attendance`);
+    staffs.value = staffResponse.data;
+}
+
+// Update chart data and options dynamically when theme or layout changes
+watch([isDarkMode, getPrimary, getSurface, isDarkTheme], () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });
 
+// Socket listener for attendance data
 socket.on('get_attendance', (m) => {
-    let founderIndex = staffs.value.staffs.findIndex(item => item.staff_id == m.staffs[0].staff_id)
+    const foundIndex = staffs.value.staffs.findIndex((item) => item.staff_id === m.staffs[0].staff_id);
 
-    if (founderIndex == -1) {
-        staffs.value.staffs.unshift(m.staffs[0])
+    if (foundIndex === -1) {
+        staffs.value.staffs.unshift(m.staffs[0]);
     } else {
-        staffs.value.staffs[founderIndex] = m.staffs[0]
+        staffs.value.staffs[foundIndex] = m.staffs[0];
     }
-    setChartData();
-})
+    chartData.value = setChartData();
+});
 
-
-
-
-
-
-
-
-async function getStaffs() {
-    let url = `/events/get-attendance`;
-    const staffResponse = await axios.get(url);
-    staffs.value = staffResponse.data;
-}
+// Initialize data on component mount
 onMounted(async () => {
     const divisionResponse = await getDivisions();
     divisions.value = divisionResponse.data;
-    await getStaffs()
+    await getStaffs();
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });
