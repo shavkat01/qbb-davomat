@@ -16,12 +16,7 @@ const staffs = ref({staffs : []});
 function setChartData() {
     const documentStyle = getComputedStyle(document.documentElement);
     if(!divisions.value) return
-    console.log(divisions.value.map(element => {
-                    return staffs.value.staffs.filter(item => {
-                        if(item.type == 1 && element.id == item.division_id){
-                           return item
-                        }
-                    }).length}));
+
     return {
         labels: divisions.value.map(item => item.name),
         datasets: [
@@ -76,11 +71,18 @@ function setChartData() {
 function setChartOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     const borderColor = documentStyle.getPropertyValue('--surface-border');
-    const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+    const textMutedColor = documentStyle.getPropertyValue('--text-color');
 
     return {
         maintainAspectRatio: false,
         aspectRatio: 0.8,
+        plugins: {
+            legend: {
+                labels: {
+                    color: textMutedColor
+                },
+            },
+        },
         scales: {
             x: {
                 stacked: true,
