@@ -9,6 +9,7 @@ const model = ref([
         items: [
             { label: 'Бош саҳифа', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Давомат', icon: 'pi pi-fw pi-th-large', to: '/attendance' },
+            { label: 'Онлайн кузатув', icon: 'pi pi-fw pi-video', to: '/survilance' },
             { label: 'Тревога', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
 
         ]

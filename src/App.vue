@@ -3,7 +3,7 @@ import SnowFalling from './components/SnowFalling.vue';
 </script>
 
 <template>
-    <SnowFalling></SnowFalling>
+    <!-- <SnowFalling></SnowFalling> -->
     <router-view />
 </template>
 

@@ -2,7 +2,7 @@
 import axios from '@/service/axiosIns.js';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import { inject, onMounted, onUnmounted, ref, watch, computed } from "vue";
+import { inject, onMounted, onUnmounted, ref, watch, computed, reactive } from "vue";
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -184,24 +184,29 @@ onUnmounted(() => {
     clearInterval(intervalId);
 });
 
-const isDarkMode = computed(() => {
-    return document.documentElement.classList.contains('app-dark');
+
+const themeColors = reactive({
+  darkMode: {
+    1: '!bg-[#004d004C] text-white',
+    2: '!bg-[#8053004C] text-white',
+    3: '!bg-[#7d000024] text-white',
+  },
+  lightMode: {
+    1: '!bg-[#007D004C] text-dark',
+    2: '!bg-[#FFA5004C] text-dark',
+    3: '!bg-[#7D00004C] text-dark',
+  },
 });
 
+
+const isDarkMode = computed(() => document.documentElement.classList.contains('app-dark'));
+
+
+
 const rowClass = (data) => {
-    if (isDarkMode.value) {
-        return [{
-            '!bg-[#004d004C] !text-white': data.type == 1,
-            '!bg-[#8053004C] !text-white': data.type == 2,
-            '!bg-[#7d000024] !text-white': data.type == 3,
-        }];
-    } else {
-        return [{
-            '!bg-[#007D004C] !text-dark': data.type == 1,
-            '!bg-[#FFA5004C] !text-dark': data.type == 2,
-            '!bg-[#7D00004C] !text-dark': data.type == 3,
-        }];
-    }
+  const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
+  const typeClass = themeColors[mode][data.type];
+  return typeClass || ''; // Fallback to empty string if type doesn't match
 };
 
 function createTrevoga(event) {
@@ -300,12 +305,12 @@ function getImage(img) {
                         <div>
                             <li class="flex items-center px-5 py-2 rounded-xl border border-surface">
                                 <div class="w-12 h-12 flex items-center justify-center bg-green-100 dark:bg-green-400/10 rounded-full mr-4 shrink-0"
-                                    :class="{ 'bg-orange-100 dark:bg-orange-400/10': trevogaStatus == 'moreThanOneHour' }">
+                                    :class="{ 'bg-yellow-100 dark:bg-yellow-400/10': trevogaStatus == 'moreThanOneHour' }">
                                     <i class="pi pi-stopwatch !text-xl text-green-500"
-                                        :class="{ 'text-orange-500': trevogaStatus == 'moreThanOneHour' }"></i>
+                                        :class="{ 'text-yellow-500': trevogaStatus == 'moreThanOneHour' }"></i>
                                 </div>
                                 <div class="w-28 text-center">
-                                    <span :class="{ 'text-orange-500': trevogaStatus == 'moreThanOneHour' }"
+                                    <span :class="{ 'text-yellow-500': trevogaStatus == 'moreThanOneHour' }"
                                         class="text-green-500 font-bold text-2xl">
                                         {{ elapsedTime }}
                                     </span>
@@ -313,7 +318,7 @@ function getImage(img) {
                             </li>
                         </div>
                     </div>
-                    <Button v-if="trevogaStatus !== 'not_given'" @click="reset($event)" severity="orange"
+                    <Button v-if="trevogaStatus !== 'not_given'" @click="reset($event)" severity="yellow"
                         label="Disabled">Қайта созлаш</Button>
                     <!-- :disabled="trevogaStatus !== 'moreThanOneHour'" -->
                 </div>
@@ -351,7 +356,7 @@ function getImage(img) {
                                         {{ item.on_time_staff }}
                                     </div>
                                     <div v-tooltip.top="{ value: `Кеч қолганлар`, showDelay: 200, hideDelay: 300 }"
-                                        class="w-12 h-9 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                        class="w-12 h-9 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg shrink-0 cursor-pointer">
                                         {{ item.late_staff }}
 
                                     </div>
@@ -372,11 +377,13 @@ function getImage(img) {
         </div>
         <div v-if="trevogaStatus !== 'not_given'" class="col-span-12 xl:col-span-6">
             <div class="card">
-                <div class="flex items-center">
-                    <div class="font-semibold text-xl">
+                <div class="text-center font-semibold text-xl">
+                    <div class="py-1 px-4 inline-block bg-gray-200 dark:bg-gray-800 text-black dark:text-white rounded-lg shrink-0 cursor-pointer">
                         {{ filter.division.division_name }}:
                     </div>
-                    <div class="mt-1 text-muted-color flex">
+                </div>
+                <div>
+                    <div class="text-muted-color flex">
                         <div class="card flex flex-wrap justify-center gap-2">
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient1" name="pizza" value="0" />
@@ -394,14 +401,14 @@ function getImage(img) {
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient3" name="pizza" value="2" />
                                 <label for="ingredient3"
-                                    class="py-1 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    class="py-1 px-4 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     Кеч қолганлар </label>
                             </div>
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient4" name="pizza" value="3" />
                                 <label for="ingredient4"
                                     class="py-1 px-4 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Келмади </label>
+                                    Келмаган </label>
                             </div>
                         </div>
                     </div>

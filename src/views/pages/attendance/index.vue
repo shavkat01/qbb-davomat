@@ -2,7 +2,7 @@
 import axios from '@/service/axiosIns.js';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { computed, inject, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch, reactive } from 'vue';
 import { useRouter } from "vue-router";
 
 
@@ -18,7 +18,6 @@ const filters = ref({
 
 
 const filter = ref({
-    status_id: null,
     division_id: null,
     type: null,
 });
@@ -50,6 +49,14 @@ async function getStaffs() {
     }
     if (filter.value.type) {
         params.push(`type=${filter.value.type}`);
+    }
+    if (filter.value.from_date) {
+        let from_date = formatDate(filter.value.from_date)
+        params.push(`from_date=${from_date}`);
+    }
+    if (filter.value.to_date) {
+        let to_date = formatDate(filter.value.to_date)
+        params.push(`to_date=${to_date}`);
     }
     if (params.length > 0) {
         url += '?' + params.join('&');
@@ -151,26 +158,51 @@ const withWeapon = computed(() => {
         return staffs.value?.staffs?.filter(item => item.weapon_status == false).length || 0;
     }
 });
-const isDarkMode = computed(() => {
-    return document.documentElement.classList.contains('app-dark');
+
+
+const themeColors = reactive({
+  darkMode: {
+    1: '!bg-[#004d004C] text-white',
+    2: '!bg-[#8053004C] text-white',
+    3: '!bg-[#7d000024] text-white',
+  },
+  lightMode: {
+    1: '!bg-[#007D004C] text-dark',
+    2: '!bg-[#FFA5004C] text-dark',
+    3: '!bg-[#7D00004C] text-dark',
+  },
 });
 
+
+const isDarkMode = computed(() => document.documentElement.classList.contains('app-dark'));
+
+
+
 const rowClass = (data) => {
-    if (isDarkMode.value) {
-        return [{
-            '!bg-[#004d004C] !text-white': data.type == 1,
-            '!bg-[#8053004C] !text-white': data.type == 2,
-            '!bg-[#7d000024] !text-white': data.type == 3,
-        }];
-    } else {
-        return [{
-            '!bg-[#007D004C] !text-dark': data.type == 1,
-            '!bg-[#FFA5004C] !text-dark': data.type == 2,
-            '!bg-[#7D00004C] !text-dark': data.type == 3,
-        }];
-    }
+  const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
+  const typeClass = themeColors[mode][data.type];
+  return typeClass || ''; // Fallback to empty string if type doesn't match
 };
 
+function formatDate(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  const pad = (num) => String(num).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
+
+
+function clearFilter(img) {
+    filter.value = {
+        division_id: null,
+        type: null,
+        from_date: null,
+        to_date: null
+    };
+    filters.value.global.value = null
+}
 
 function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
@@ -187,30 +219,38 @@ function getImage(img) {
                 :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
                 <template #header>
-                    <div class="flex flex-wrap gap-2 items-center justify-between">
-                        <h4 class="m-0">Ходимлар давомати</h4>
-                        <div>
-                            <div class="grid grid-cols-12 gap-4">
-                                <div class="col-span-3">
-                                    <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
-                                        optionValue="id" placeholder="Bo'limi" fluid showClear />
-                                </div>
-                                <!-- <div class="col-span-3">
-                                    <Select v-model="filter.status_id" :options="statusList" optionLabel="name"
-                                        optionValue="id" placeholder="Holati" fluid showClear />
-                                </div> -->
-                                <div class="col-span-3">
-                                    <Select v-model="filter.type" :options="typeList" optionLabel="name"
-                                        optionValue="id" placeholder="Holati" fluid showClear />
-                                </div>
-                                <div class="col-span-3">
-                                    <IconField>
-                                        <InputIcon>
-                                            <i class="pi pi-search" />
-                                        </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
-                                    </IconField>
-                                </div>
+                    <div>
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-2">
+                                <IconField>
+                                    <InputIcon>
+                                        <i class="pi pi-search" />
+                                    </InputIcon>
+                                    <InputText v-model="filters['global'].value" placeholder="Қидириш..." />
+                                </IconField>
+                            </div>
+                            <div class="col-span-2">
+                                <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
+                                    optionValue="id" placeholder="Бўлими" fluid showClear />
+                            </div>
+                            <div class="col-span-2">
+                                <Select v-model="filter.type" :options="typeList" optionLabel="name" optionValue="id"
+                                    placeholder="Ҳолати" fluid showClear />
+                            </div>
+                            <div class="col-span-2">
+                                <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.from_date" fluid
+                                    showTime hourFormat="24" placeholder="Дан">
+                                </DatePicker>
+                            </div>
+                            <div class="col-span-2">
+                                <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.to_date" fluid
+                                    showTime hourFormat="24" placeholder="Гача">
+                                </DatePicker>
+                            </div>
+                            <div class="col-span-2">
+                                <Button label="Aслига қайтариш" icon="pi pi-filter-slash"
+                                    :disabled="filters['global'].value || filter.division_id || filter.type || filter?.from_date || filter?.to_date ? false : true"
+                                    @click="clearFilter" />
                             </div>
                         </div>
                     </div>
@@ -228,24 +268,43 @@ function getImage(img) {
                 </Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
-                <Column field="first_time" header="Келган вақти" sortable></Column>
+                <Column field="state" header="Унвон" sortable></Column>
+                <Column field="first_time" header="Келган вақти" sortable>
+                    <template #body="slotProps">
+                        <div v-if="slotProps.data.first_time" class="flex items-center">
+                            <div
+                                class="px-4 h-9 flex items-center justify-center bg-surface-200 dark:bg-surface-800 text-black dark:text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-clock mr-4"></i>
+                                {{ slotProps.data.last_time }}
+                            </div>
+                        </div>
+                        <div v-else-if="!slotProps.data.first_time" class="flex items-center">
+                            <div>
+                                Келмади
+                            </div>
+                        </div>
+                    </template>
+                </Column>
                 <Column field="is_here" header="Қаерда" sortable>
                     <template #body="slotProps">
-                        <div v-if="slotProps.data.is_here" class="flex items-center">
+                        <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                            v-if="slotProps.data.is_here" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-in mr-4"></i>
                                 {{ slotProps.data.last_time }}
                             </div>
                         </div>
-                        <div v-else-if="slotProps.data.is_here == false" class="flex items-center">
+                        <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                            v-else-if="slotProps.data.is_here == false" class="flex items-center">
                             <div
-                                class="h-9 px-4 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-out mr-4"></i>
                                 {{ slotProps.data.last_time }}
                             </div>
                         </div>
-                        <div v-else-if="slotProps.data.is_here == null"
+                        <div v-tooltip.top="{ value: `Ишхонага келмаган`, showDelay: 200, hideDelay: 300 }"
+                            v-else-if="slotProps.data.is_here == null"
                             class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-900 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                             <i class="pi pi-home"></i>
                         </div>
@@ -254,13 +313,36 @@ function getImage(img) {
                 <Column field="type" header="Қуролланган" sortable>
                     <template #body="slotProps">
                         <div class="flex items-center justify-center w-28">
-                            <div v-if="slotProps.data.weapon_status == false"
-                                class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-check"></i>
+                            <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
+                                v-if="slotProps.data.weapon_status == false"
+                                class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
+                                :class="{'h-16' : slotProps.data.weapon_time}">
+                                <i class="pi pi-check" :class="{'mr-4 bg-green-700 dark:bg-green-600 p-2 rounded-lg' : slotProps.data.weapon_time}"></i>
+                                <div v-if="slotProps.data.weapon_time" class="flex gap-2">
+                                    <div>
+                                        <i class="pi pi-calendar mr-1"></i>
+                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0,5) }}
+                                    </div>
+                                    <div>
+                                        <i class="pi pi-clock mr-1"></i>
+                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0,5) }}
+                                    </div>
+                                </div>
                             </div>
-                            <div v-else
-                                class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-times"></i>
+                            <div v-tooltip.top="{ value: `Қуролланмаган`, showDelay: 200, hideDelay: 300 }" v-else
+                                class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
+                                :class="{ 'h-16': slotProps.data.weapon_time }">
+                                <i class="pi pi-times" :class="{ 'mr-4 bg-red-700 dark:bg-red-600 p-2 rounded-lg': slotProps.data.weapon_time }"></i>
+                                <div v-if="slotProps.data.weapon_time" class="flex gap-2">
+                                    <div>
+                                        <i class="pi pi-calendar mr-1"></i>
+                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0,5) }}
+                                    </div>
+                                    <div>
+                                        <i class="pi pi-clock mr-1"></i>
+                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0,5) }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -283,7 +365,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="2">
+                        <Column colspan="4">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
