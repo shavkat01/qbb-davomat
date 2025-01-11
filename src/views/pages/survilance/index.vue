@@ -187,7 +187,7 @@ function getImage(img) {
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <img :src="enterStaff.photo" class="w-full rounded" />
+                                <img :src="enterStaff.photo" alt="" class="w-full rounded" />
                             </div>
                         </div>
                         <div class="text-center mt-3">
@@ -214,7 +214,7 @@ function getImage(img) {
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <img :src="getOutStaff.photo" class="w-full rounded" />
+                                <img :src="getOutStaff.photo" alt="" class="w-full rounded" />
                             </div>
                         </div>
                         <div class="text-center mt-3">

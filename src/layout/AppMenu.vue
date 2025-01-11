@@ -8,7 +8,7 @@ const model = ref([
         label: 'Aсосий',
         items: [
             { label: 'Бош саҳифа', icon: 'pi pi-fw pi-home', to: '/' },
-            { label: 'Давомат', icon: 'pi pi-fw pi-th-large', to: '/attendance' },
+            { label: 'Давомат', icon: 'pi pi-fw pi-calendar', to: '/attendance' },
             { label: 'Онлайн кузатув', icon: 'pi pi-fw pi-video', to: '/survilance' },
             { label: 'Тревога', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
 
@@ -67,7 +67,7 @@ const model = ref([
             // },
             {
                 label: 'Ходимлар',
-                icon: 'pi pi-fw pi-cog',
+                icon: 'pi pi-fw pi-users',
                 to: '/pages/staffs'
             },
             // {

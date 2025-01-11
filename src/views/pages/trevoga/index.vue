@@ -213,7 +213,7 @@ function createTrevoga(event) {
     try {
         confirm.require({
             target: event.currentTarget,
-            message: 'Siz rostdan ham trevoga xabarini yubormoqchimisiz',
+            message: 'Сиз ростдан ҳам тревога хабарини юбормоқчимисиз',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
                 label: "Yo'q",
@@ -248,7 +248,7 @@ function reset(event) {
     try {
         confirm.require({
             target: event.currentTarget,
-            message: 'Siz rostdan ham trevoga xabarini qayta sozlamoqchimisiz?',
+            message: 'Сиз ростдан ҳам тревога хабарини қайта созламоқчимисиз?',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
                 label: "Yo'q",
