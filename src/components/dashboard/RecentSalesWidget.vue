@@ -42,7 +42,7 @@ function getImage(img) {
 <template>
     <div class="card">
         <div class="font-semibold text-xl mb-4">{{ status }}</div>
-        <DataTable ref="dt" :value="staffs" dataKey="id" :paginator="true" :rows="13" :loading="loading"
+        <DataTable ref="dt" :value="staffs" dataKey="id" :paginator="true" :rows="10" :loading="loading"
             :filters="filters"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 13, 25]"
@@ -55,7 +55,7 @@ function getImage(img) {
             </template>
             <Column header="Расм">
                 <template #body="slotProps">
-                    <Image :src="getImage(slotProps.data.photo)" alt="Image" width="50" preview />
+                    <Image :src="getImage(slotProps.data.photo)" alt="Image" width="25" preview />
                 </template>
             </Column>
             <Column field="fullname" header="Ф.И.О" sortable style="min-width: 4rem"></Column>
