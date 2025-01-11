@@ -132,11 +132,11 @@ const themeColors = reactive({
 
 
 const enterStaff = computed(() => 
-    staffs.value?.filter(item => item.is_here === false)?.[0]
+    staffs.value?.filter(item => item.is_here == true)?.[0]
 );
 
 const getOutStaff = computed(() => 
-    staffs.value?.filter(item => item.is_here === true)?.[0]
+    staffs.value?.filter(item => item.is_here == false)?.[0]
 );
 
 
