@@ -203,6 +203,11 @@ function clearFilter(img) {
     };
     filters.value.global.value = null
 }
+const visibleRight = ref(false)
+
+function editStaff(params) {
+    visibleRight.value = params
+}
 
 function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
@@ -279,8 +284,8 @@ function getImage(img) {
                             </div>
                         </div>
                         <div v-else-if="!slotProps.data.first_time" class="flex items-center">
-                            <div>
-                                Келмади
+                            <div class="">
+                                -
                             </div>
                         </div>
                     </template>
@@ -288,11 +293,13 @@ function getImage(img) {
                 <Column field="is_here" header="Қаерда" sortable>
                     <template #body="slotProps">
                         <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
-                            v-if="slotProps.data.is_here" class="flex items-center">
+                            v-if="slotProps.data.is_here || slotProps.data.type == 1" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-in mr-4"></i>
-                                {{ slotProps.data.last_time }}
+                                <i class="pi pi-sign-in"></i>
+                                <div v-if="slotProps.data?.last_time" class="ml-4">
+                                    {{ slotProps.data?.last_time }}
+                                </div>
                             </div>
                         </div>
                         <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
@@ -300,7 +307,7 @@ function getImage(img) {
                             <div
                                 class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-out mr-4"></i>
-                                {{ slotProps.data.last_time }}
+                                {{ slotProps.data?.last_time }}
                             </div>
                         </div>
                         <div v-tooltip.top="{ value: `Ишхонага келмаган`, showDelay: 200, hideDelay: 300 }"
@@ -312,7 +319,7 @@ function getImage(img) {
                 </Column>
                 <Column field="type" header="Қуролланган" sortable>
                     <template #body="slotProps">
-                        <div class="flex items-center justify-center w-28">
+                        <div class="flex items-center justify-center w-28 mx-10">
                             <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
                                 v-if="slotProps.data.weapon_status == false"
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
@@ -330,7 +337,7 @@ function getImage(img) {
                                 </div>
                             </div>
                             <div v-tooltip.top="{ value: `Қуролланмаган`, showDelay: 200, hideDelay: 300 }" v-else
-                                class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
+                                class="px-4 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
                                 :class="{ 'h-16': slotProps.data.weapon_time }">
                                 <i class="pi pi-times" :class="{ 'mr-4 bg-red-700 dark:bg-red-600 p-2 rounded-lg': slotProps.data.weapon_time }"></i>
                                 <div v-if="slotProps.data.weapon_time" class="flex gap-2">
@@ -347,7 +354,11 @@ function getImage(img) {
                         </div>
                     </template>
                 </Column>
-
+                <Column header="Aмаллар">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-pencil" :disabled="slotProps.data.division_id != 2" rounded severity="warn" class="mx-2" @click="editStaff(slotProps.data)" />
+                    </template>
+                </Column>
                 <ColumnGroup type="footer">
                     <Row>
                         <Column colspan="1">
@@ -422,7 +433,7 @@ function getImage(img) {
                                 </div>
                             </template>
                         </Column>
-                        <Column colspan="1">
+                        <Column colspan="2">
                             <template #footer="slotProps">
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
@@ -442,6 +453,9 @@ function getImage(img) {
                 </ColumnGroup>
             </DataTable>
         </div>
+        <Drawer v-model:visible="visibleRight" header="Right Drawer" position="right">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </Drawer>
     </div>
 </template>
 

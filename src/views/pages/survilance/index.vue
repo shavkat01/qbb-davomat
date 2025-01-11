@@ -182,12 +182,12 @@ function getImage(img) {
             <div class="flex items-center h-full">
                 <div v-if="enterStaff" class="w-1/2">
                     <div class="text-center mb-3">
-                        <div class="mt-0 font-semibold text-xl">Кириш</div>
+                        <div class="mt-0 font-semibold text-3xl">Кириш</div>
                     </div>
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <img :src="enterStaff.photo" alt="" class="w-full rounded" />
+                                <img :src="getImage(enterStaff.photo)" alt="" class="w-96 rounded object-cover" style="height: 400px;"/>
                             </div>
                         </div>
                         <div class="text-center mt-3">
@@ -209,12 +209,12 @@ function getImage(img) {
                 </div>
                 <div v-if="getOutStaff" class="w-1/2">
                     <div class="text-center mb-3">
-                        <div class="mt-0 font-semibold text-xl">Чиқиш</div>
+                        <div class="mt-0 font-semibold text-3xl">Чиқиш</div>
                     </div>
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <img :src="getOutStaff.photo" alt="" class="w-full rounded" />
+                                <img :src="getImage(getOutStaff.photo)" alt="" class="w-96 rounded object-cover" style="height: 400px;"/>
                             </div>
                         </div>
                         <div class="text-center mt-3">

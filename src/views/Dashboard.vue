@@ -14,7 +14,7 @@ const divisions = ref([]);
 const statusList = ref([]);
 const attendance = ref([]);
 const staffs = ref([]);
-const statusName = ref('Рўйхат бўйича');
+const statusName = ref('Рўйхатда');
 const loading = ref(false);
 
 

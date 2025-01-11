@@ -158,6 +158,6 @@ onMounted(async () => {
 <template>
     <div class="card">
         <div class="font-semibold text-xl mb-4">Бугунги кунлилк давомат</div>
-        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-96" />
+        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-64"/>
     </div>
 </template>
