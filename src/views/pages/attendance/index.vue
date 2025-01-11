@@ -2,8 +2,9 @@
 import axios from '@/service/axiosIns.js';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, watch, computed, inject } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
+
 
 const socket = inject('socket');
 
@@ -28,11 +29,11 @@ const statusList = ref([]);
 const staffs = ref([]);
 const selectedProducts = ref();
 const typeList = ref([
-    {id: 1, name: 'Вақтида келганлар'},
-    {id: 2, name: 'Кеч қолганлар'},
-    {id: 3, name: 'Келмади'},
-    {id: 4, name: 'Бинода'},
-    {id: 5, name: 'Бинода эмас'},
+    { id: 1, name: 'Вақтида келганлар' },
+    { id: 2, name: 'Кеч қолганлар' },
+    { id: 3, name: 'Келмади' },
+    { id: 4, name: 'Бинода' },
+    { id: 5, name: 'Бинода эмас' },
 ]);
 
 
@@ -146,7 +147,7 @@ socket.on('get_attendance', (m) => {
 
 
 const withWeapon = computed(() => {
-    if(staffs.value?.staffs){
+    if (staffs.value?.staffs) {
         return staffs.value?.staffs?.filter(item => item.weapon_status == false).length || 0;
     }
 });
@@ -183,7 +184,7 @@ function getImage(img) {
             <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs.staffs"
                 dataKey="id" :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                :rowsPerPageOptions="[5,8, 10, 15, 25, 50, 100]"
+                :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
@@ -227,15 +228,22 @@ function getImage(img) {
                 </Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
+                <Column field="first_time" header="Келган вақти" sortable></Column>
                 <Column field="is_here" header="Қаерда" sortable>
                     <template #body="slotProps">
-                        <div v-if="slotProps.data.is_here"
-                            class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                            <i class="pi pi-sign-in"></i>
+                        <div v-if="slotProps.data.is_here" class="flex items-center">
+                            <div
+                                class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-sign-in mr-4"></i>
+                                {{ slotProps.data.last_time }}
+                            </div>
                         </div>
-                        <div v-else-if="slotProps.data.is_here == false"
-                            class="w-12 h-9 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                            <i class="pi pi-sign-out"></i>
+                        <div v-else-if="slotProps.data.is_here == false" class="flex items-center">
+                            <div
+                                class="h-9 px-4 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-sign-out mr-4"></i>
+                                {{ slotProps.data.last_time }}
+                            </div>
                         </div>
                         <div v-else-if="slotProps.data.is_here == null"
                             class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-900 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
