@@ -273,7 +273,7 @@ function getImage(img) {
                 </Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
-                <Column field="state" header="Унвон" sortable></Column>
+                <Column field="state" header="Ҳозирда" sortable></Column>
                 <Column field="first_time" header="Келган вақти" sortable>
                     <template #body="slotProps">
                         <div v-if="slotProps.data.first_time" class="flex items-center">
