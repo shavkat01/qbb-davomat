@@ -2,7 +2,7 @@
 import axios from '@/service/axiosIns.js';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { computed, inject, onMounted, ref, watch, reactive } from 'vue';
+import { computed, inject, onMounted, ref, watch, reactive, onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
 
 
@@ -19,7 +19,7 @@ const filters = ref({
 
 const filter = ref({
     division_id: null,
-    type: null,
+    type: 1,
 });
 
 const ranks = ref([]);
@@ -27,13 +27,6 @@ const divisions = ref([]);
 const statusList = ref([]);
 const staffs = ref([]);
 const selectedProducts = ref();
-const typeList = ref([
-    { id: 1, name: 'Вақтида келганлар' },
-    { id: 2, name: 'Кеч қолганлар' },
-    { id: 3, name: 'Келмади' },
-    { id: 4, name: 'Бинода' },
-    { id: 5, name: 'Бинода эмас' },
-]);
 
 
 async function getStaffs() {
@@ -100,12 +93,13 @@ onMounted(async () => {
     }
 });
 
+
 watch(() => filter.value, () => {
     getStaffs()
 }, { deep: true })
 
 socket.on('get_attendance', (m) => {
-
+    if(filter.value.type != 1) return
     let founderIndex = staffs.value.findIndex(item => item.staff_id == m.staffs[0].staff_id)
     if (founderIndex == -1) {
         staffs.value.unshift(m.staffs[0])
@@ -113,9 +107,23 @@ socket.on('get_attendance', (m) => {
         staffs.value.splice(founderIndex, 1)
         staffs.value.unshift(m.staffs[0])
     }
-
 })
 
+socket.on('get_weapons', (m) => {
+    console.log('Connected to get_weapons channel', m)
+    let founderIndex = staffs.value.findIndex(item => item.staff_id == m[0].staff_id)
+    if (founderIndex == -1) {
+        staffs.value.unshift(m.staffs[0])
+    } else {
+        staffs.value.splice(founderIndex, 1)
+        staffs.value.unshift(m.staffs[0])
+    }
+})
+
+onUnmounted(async () => {
+    socket.off('get_attendance')
+    socket.off('get_weapons')
+})
 
 const themeColors = reactive({
   darkMode: {
@@ -137,6 +145,13 @@ const enterStaff = computed(() =>
 
 const getOutStaff = computed(() => 
     staffs.value?.filter(item => item.is_here == false)?.[0]
+);
+const getweapon = computed(() => 
+    staffs.value?.filter(item => item.weapon_status == false)?.[0]
+);
+
+const putWeapon = computed(() => 
+    staffs.value?.filter(item => item.weapon_status == true)?.[0]
 );
 
 
@@ -161,85 +176,170 @@ function formatDate(date) {
 };
 
 
-function clearFilter(img) {
-    filter.value = {
-        division_id: null,
-        type: null,
-        from_date: null,
-        to_date: null
-    };
-    filters.value.global.value = null
-}
-
 function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <template>
     <div class="menage-staffs grid grid-cols-12 gap-3">
-        <div class="col-span-6 card">
-            <div class="flex items-center h-full">
-                <div v-if="enterStaff" class="w-1/2">
-                    <div class="text-center mb-3">
-                        <div class="mt-0 font-semibold text-3xl">Кириш</div>
-                    </div>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-                        <div class="mb-4">
-                            <div class="relative mx-auto">
-                                <img :src="getImage(enterStaff.photo)" alt="" class="w-96 rounded object-cover" style="height: 400px;"/>
+        <div class="col-span-6">
+            <div class="card">
+                <Tabs value="0" class="w-full">
+                    <TabList>
+                        <Tab @click="filter.type = 1" value="0">Кирди-чиқди</Tab>
+                        <Tab @click="filter.type = 2" value="1">Қурол олди-олмади</Tab>
+                    </TabList>
+                    <TabPanels class="!p-0">
+                        <TabPanel value="0" class="flex gap-3 w-full pt-3">
+                            <div v-if="enterStaff" class="w-1/2">
+                                <div class="text-center mb-3">
+                                    <div class="mt-0 font-semibold text-3xl">Кириш</div>
+                                </div>
+                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                    <div class="mb-4 w-full flex justify-center">
+                                        <div class="text-center">
+                                            <img :src="getImage(enterStaff.photo)" alt=""
+                                                class="w-48 rounded object-cover" style="height: 200px;" />
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            {{ enterStaff?.division_name }}
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="mt-0 font-semibold text-xl">{{ enterStaff?.fullname }}</div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            <i class="pi pi-sign-in mr-4"></i>
+                                            {{ enterStaff?.last_time }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-center mt-3">
-                                <div class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                {{ enterStaff?.division_name }}
+                            <div v-if="getOutStaff" class="w-1/2">
+                                <div class="text-center mb-3">
+                                    <div class="mt-0 font-semibold text-3xl">Чиқиш</div>
+                                </div>
+                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                    <div class="mb-4 w-full flex justify-center">
+                                        <div class="text-center">
+                                            <img :src="getImage(getOutStaff.photo)" alt=""
+                                                class="w-48 rounded object-cover" style="height: 200px;" />
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            {{ getOutStaff?.division_name }}
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="mt-0 font-semibold text-xl">{{ getOutStaff?.fullname }}</div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            <i class="pi pi-sign-out rotate-180 mr-4"></i>
+                                            {{ getOutStaff?.last_time }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <div class="mt-0 font-semibold text-xl">{{ enterStaff?.fullname }}</div>
-                        </div>
-                        <div class="text-center mt-3">
-                                <div
-                                class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-in mr-4"></i>
-                                {{ enterStaff?.last_time }}
+                        </TabPanel>
+
+                        <TabPanel value="1" class="flex gap-3 w-full pt-3">
+                            <div v-if="getweapon" class="w-1/2">
+                                <div class="text-center mb-3">
+                                    <div class="mt-0 font-semibold text-3xl">Қурол олди</div>
+                                </div>
+                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                    <div class="mb-4 w-full flex justify-center">
+                                        <div class="text-center">
+                                            <img :src="getImage(getweapon.photo)" alt=""
+                                                class="w-48 rounded object-cover" style="height: 200px;" />
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            {{ getweapon?.division_name }}
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="mt-0 font-semibold text-xl">{{ getweapon?.fullname }}</div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            <i class="pi pi-check mr-4"></i>
+                                            {{ getweapon?.weapon_time }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="getOutStaff" class="w-1/2">
-                    <div class="text-center mb-3">
-                        <div class="mt-0 font-semibold text-3xl">Чиқиш</div>
-                    </div>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
-                        <div class="mb-4">
-                            <div class="relative mx-auto">
-                                <img :src="getImage(getOutStaff.photo)" alt="" class="w-96 rounded object-cover" style="height: 400px;"/>
+                            <div v-if="putWeapon" class="w-1/2">
+                                <div class="text-center mb-3">
+                                    <div class="mt-0 font-semibold text-3xl">Қурол топширди</div>
+                                </div>
+                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                    <div class="mb-4 w-full flex justify-center">
+                                        <div class="text-center">
+                                            <img :src="getImage(putWeapon.photo)" alt=""
+                                                class="w-48 rounded object-cover" style="height: 200px;" />
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            {{ putWeapon?.division_name }}
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="mt-0 font-semibold text-xl">{{ putWeapon?.fullname }}</div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div
+                                            class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                            <i class="pi pi-times rotate-180 mr-4"></i>
+                                            {{ putWeapon?.weapon_time }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-center mt-3">
-                                <div class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                {{ getOutStaff?.division_name }}
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <div class="mt-0 font-semibold text-xl">{{ getOutStaff?.fullname }}</div>
-                        </div>
-                        <div class="text-center mt-3">
-                                <div
-                                class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-out rotate-180 mr-4"></i>
-                                {{ getOutStaff?.last_time }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             
+                        </TabPanel>
+
+
+                    </TabPanels>
+                </Tabs>
+
+            </div>
+            <div class="card">
+
             </div>
         </div>
         <div class="card col-span-6">
-            <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs"
-                dataKey="id" :paginator="true" :rows="10" :loading="loading" :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs" dataKey="id"
+                :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
@@ -259,32 +359,59 @@ function getImage(img) {
                 </template>
                 <Column field="is_here" header="Амал" sortable>
                     <template #body="slotProps">
-                        <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
-                            v-if="slotProps.data.is_here" class="flex items-center">
-                            <div
-                                class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-in mr-4"></i>
-                                Кирди
+                        <div v-if="filter.type == 1">
+                            <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                                v-if="slotProps.data.is_here" class="flex items-center">
+                                <div
+                                    class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    <i class="pi pi-sign-in mr-4"></i>
+                                    Кирди
+                                </div>
+                            </div>
+                            <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                                v-else-if="slotProps.data.is_here == false" class="flex items-center">
+                                <div
+                                    class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    <i class="pi pi-sign-out mr-4 rotate-180"></i>
+                                    Чиқди
+                                </div>
                             </div>
                         </div>
-                        <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
-                            v-else-if="slotProps.data.is_here == false" class="flex items-center">
-                            <div
-                                class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-out mr-4 rotate-180"></i>
-                                Чиқди
+                        <div v-if="filter.type == 2">
+                            <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                                v-if="slotProps.data.weapon_status == false" class="flex items-center">
+                                <div
+                                    class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    <i class="pi pi-check mr-4"></i>
+                                    Олди
+                                </div>
+                            </div>
+                            <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                                v-else-if="slotProps.data.weapon_status == true" class="flex items-center">
+                                <div
+                                    class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                    <i class="pi pi-times mr-4 rotate-180"></i>
+                                    Топширди
+                                </div>
                             </div>
                         </div>
-                     
+
                     </template>
                 </Column>
                 <Column header="Вақти" sortable>
                     <template #body="slotProps">
-                        <div v-if="slotProps.data.last_time" class="flex items-center">
+                        <div v-if="filter.type == 1 && slotProps.data.last_time" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-surface-200 dark:bg-surface-800 text-black dark:text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-clock mr-4"></i>
                                 {{ slotProps.data.last_time }}
+                            </div>
+                        </div>
+                        <div v-if="filter.type == 2 && slotProps.data.weapon_time" class="flex items-center">
+                            <div
+                                class="px-4 h-9 flex items-center justify-center bg-surface-200 dark:bg-surface-800 text-black dark:text-white rounded-lg mr-4 shrink-0 cursor-pointer">
+                                <i class="pi pi-clock mr-4"></i>
+                                {{ slotProps.data.weapon_time }}
                             </div>
                         </div>
                     </template>
@@ -295,8 +422,8 @@ function getImage(img) {
                         {{ slotProps.data.fullname }}
                     </template>
                 </Column>
-                
- 
+
+
             </DataTable>
         </div>
     </div>

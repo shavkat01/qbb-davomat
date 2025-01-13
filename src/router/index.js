@@ -21,6 +21,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/attendance/index.vue')
                 },
                 {
+                    path: '/attendance/history/:id',
+                    name: 'attendance-history',
+                    component: () => import('@/views/pages/attendance/history.vue')
+                },
+                {
                     path: '/survilance',
                     name: 'survilance',
                     component: () => import('@/views/pages/survilance/index.vue')

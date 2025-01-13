@@ -2,7 +2,7 @@
 import axios from '@/service/axiosIns.js';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { computed, inject, onMounted, ref, watch, reactive } from 'vue';
+import { computed, inject, onMounted, ref, watch, reactive, onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
 
 
@@ -22,6 +22,7 @@ const filter = ref({
     type: null,
 });
 
+const changeStatus = ref();
 const ranks = ref([]);
 const divisions = ref([]);
 const statusList = ref([]);
@@ -53,10 +54,6 @@ async function getStaffs() {
     if (filter.value.from_date) {
         let from_date = formatDate(filter.value.from_date)
         params.push(`from_date=${from_date}`);
-    }
-    if (filter.value.to_date) {
-        let to_date = formatDate(filter.value.to_date)
-        params.push(`to_date=${to_date}`);
     }
     if (params.length > 0) {
         url += '?' + params.join('&');
@@ -103,7 +100,6 @@ onMounted(async () => {
 watch(() => filter.value, () => {
     getStaffs()
 }, { deep: true })
-
 
 socket.on('get_weapons', (m) => {
     console.log('Connected to get_weapons channel', m)
@@ -152,6 +148,10 @@ socket.on('get_attendance', (m) => {
 })
 
 
+onUnmounted(() => {
+  socket.off('get_weapons');
+  socket.off('get_attendance');
+});
 
 const withWeapon = computed(() => {
     if (staffs.value?.staffs) {
@@ -188,9 +188,7 @@ function formatDate(date) {
   if (!date) return null;
   const d = new Date(date);
   const pad = (num) => String(num).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
 
@@ -199,7 +197,6 @@ function clearFilter(img) {
         division_id: null,
         type: null,
         from_date: null,
-        to_date: null
     };
     filters.value.global.value = null
 }
@@ -207,6 +204,20 @@ const visibleRight = ref(false)
 
 function editStaff(params) {
     visibleRight.value = params
+}
+
+function saveChangeStatus(params) {
+    if(visibleRight.value.face_id){
+        if(!changeStatus.value) toast.add({ severity: 'error', summary: 'Holat o\'zgartirilmadi', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
+
+        axios.put(`/events/update-face-event/`, {face_id : visibleRight.value.face_id, type: changeStatus.value});
+        getStaffs()
+        toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
+    }
+}
+
+function enterToHistory(params) {
+    router.push(`/attendance/history/${params.data.staff_id}`)
 }
 
 function getImage(img) {
@@ -222,6 +233,7 @@ function getImage(img) {
                 dataKey="id" :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
+                v-on:row-click="enterToHistory"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
                 <template #header>
                     <div>
@@ -244,17 +256,12 @@ function getImage(img) {
                             </div>
                             <div class="col-span-2">
                                 <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.from_date" fluid
-                                    showTime hourFormat="24" placeholder="Дан">
-                                </DatePicker>
-                            </div>
-                            <div class="col-span-2">
-                                <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.to_date" fluid
-                                    showTime hourFormat="24" placeholder="Гача">
+                                    placeholder="Сана">
                                 </DatePicker>
                             </div>
                             <div class="col-span-2">
                                 <Button label="Aслига қайтариш" icon="pi pi-filter-slash"
-                                    :disabled="filters['global'].value || filter.division_id || filter.type || filter?.from_date || filter?.to_date ? false : true"
+                                    :disabled="filters['global'].value || filter.division_id || filter.type || filter?.from_date ? false : true"
                                     @click="clearFilter" />
                             </div>
                         </div>
@@ -280,7 +287,7 @@ function getImage(img) {
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-surface-200 dark:bg-surface-800 text-black dark:text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-clock mr-4"></i>
-                                {{ slotProps.data.last_time }}
+                                {{ slotProps.data.first_time }}
                             </div>
                         </div>
                         <div v-else-if="!slotProps.data.first_time" class="flex items-center">
@@ -306,7 +313,7 @@ function getImage(img) {
                             v-else-if="slotProps.data.is_here == false" class="flex items-center">
                             <div
                                 class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                <i class="pi pi-sign-out mr-4"></i>
+                                <i class="pi pi-sign-out rotate-180 mr-4"></i>
                                 {{ slotProps.data?.last_time }}
                             </div>
                         </div>
@@ -453,8 +460,13 @@ function getImage(img) {
                 </ColumnGroup>
             </DataTable>
         </div>
-        <Drawer v-model:visible="visibleRight" header="Right Drawer" position="right">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <Drawer v-model:visible="visibleRight" header="Ҳолат ўзгартириш" position="right">
+            <Select v-model="changeStatus" :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{id:4, name: 'Binoda'}, {id:5, name: 'Binoda emas'}] : [{id:1, name: 'Keldi'}, {id:2, name: 'Kech qoldi'}, {id:5, name: 'Binoda emas'}]" optionLabel="name" optionValue="id"
+                placeholder="Танланг" required fluid />
+            <div class="flex justify-around mt-10">
+                <Button severity="danger" icon="pi pi-times" @click="visibleRight = false" />
+                <Button severity="success" icon="pi pi-check" @click="saveChangeStatus" />
+            </div>    
         </Drawer>
     </div>
 </template>

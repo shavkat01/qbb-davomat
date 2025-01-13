@@ -182,6 +182,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
     clearInterval(intervalId);
+    socket.off('get_weapons');    
 });
 
 

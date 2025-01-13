@@ -48,7 +48,7 @@ function updateClock() {
         </div>
 
         <div>
-			<div v-if="clock" id="clock" class="w-full text-3xl flex gap-10">
+			<div v-if="clock" id="clock" class="w-full text-3xl flex gap-10 text-primary">
                 <div>
                     <i class="pi pi-calendar mr-1 !text-3xl"></i>
                     {{ clock.split(' ')[0] }}

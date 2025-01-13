@@ -1,6 +1,6 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { onMounted, ref, watch, inject, computed } from 'vue';
+import { onMounted, ref, watch, inject, computed, onUnmounted } from 'vue';
 import axios from '@/service/axiosIns.js';
 import { useBasicStore } from '@/store/basic';
 
@@ -153,6 +153,10 @@ onMounted(async () => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
 });
+
+onUnmounted(async () => {
+    socket.off('get_attendance')
+})
 </script>
 
 <template>

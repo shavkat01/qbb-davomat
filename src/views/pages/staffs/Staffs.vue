@@ -11,6 +11,7 @@ import { useRouter } from "vue-router";
 
 
 
+
 const router = useRouter();
 const toast = useToast();
 const dt = ref();
@@ -174,7 +175,7 @@ function saveStaff() {
             const to_date = formatDate(staff.value.to_date)
             formData.append('from_date', from_date);
             formData.append('to_date', to_date);
-        }else{
+        } else {
             formData.append('from_date', '');
             formData.append('to_date', '');
         }
@@ -187,7 +188,7 @@ function saveStaff() {
                 formData.append('state_id', staff.value.state_id);
             }
             updateStaff(staff.value.id, formData).then(() => {
-                toast.add({ severity: 'success', summary: 'Successful', detail: 'Staff Updated', life: 3000 });
+                toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
                 getStaffs();
                 staffDialog.value = false;
             }).catch(() => {
@@ -196,12 +197,12 @@ function saveStaff() {
         } else {
             // Add new staff with the FormData
             addStaff(formData).then((response) => {
-                toast.add({ severity: 'success', summary: 'Successful', detail: 'Staff Created', life: 3000 });
+                toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
                 getStaffs();
                 staffDialog.value = false;
 
             }).catch(() => {
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to add staff.', life: 3000 });
+                toast.add({ severity: 'error', summary: 'Хатолик', detail: 'Хатолик', life: 3000 });
             });
         }
     }
@@ -240,7 +241,7 @@ function deleteStaff() {
         getStaffs();
 
         deleteStaffDialog.value = false;
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Staff Deleted', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Staff Deleted', life: 3000 });
     }).catch(() => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete staff.', life: 3000 });
     });
@@ -257,7 +258,7 @@ function deleteSelectedStaffs() {
             getStaffs();
             deleteStaffsDialog.value = false;
             selectedStaffs.value = null;
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Selected Staffs Deleted', life: 3000 });
+            toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Selected Staffs Deleted', life: 3000 });
         }).catch(() => {
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete selected staff.', life: 3000 });
         });
@@ -341,7 +342,7 @@ const manualInput = ref(""); // Manual input string
 const toggleInputMode = () => {
     isManualInput.value = !isManualInput.value;
     if (!isManualInput.value && manualInput.value) {
-    handleManualInput();
+        handleManualInput();
     }
 };
 
@@ -351,10 +352,10 @@ const handleManualInput = () => {
 
     const parsedDate = new Date(manualInput.value);
     if (!isNaN(parsedDate)) {
-    staff.value.birth_date = parsedDate;
-    isManualInput.value = false; // Switch back to the picker if input is valid
+        staff.value.birth_date = parsedDate;
+        isManualInput.value = false; // Switch back to the picker if input is valid
     } else {
-    alert("Invalid date format. Please use yyyy-mm-dd.");
+        alert("Invalid date format. Please use yyyy-mm-dd.");
     }
 };
 
@@ -379,8 +380,8 @@ const syncManualInput = (date) => {
                     <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
-            <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id"
-                :paginator="true" :rows="10" :loading="loading" :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id" :paginator="true"
+                :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
@@ -421,7 +422,8 @@ const syncManualInput = (date) => {
                         <a @click="selectedProduct(slotProps)" class="text-blue-500">
                             {{ slotProps.data.fullname }}
                         </a>
-                    </template></Column>
+                    </template>
+                </Column>
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="status" header="Ҳолат" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
@@ -432,8 +434,10 @@ const syncManualInput = (date) => {
                 <Column field="birth_date" header="Туғулган куни" sortable></Column>
                 <Column header="Aмаллар" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button icon="pi pi-angle-right" outlined rounded class="mr-2" @click="selectedProduct(slotProps)" />
-                        <Button icon="pi pi-pencil" outlined rounded severity="warn" class="mr-2" @click="editStaff(slotProps.data)" />
+                        <Button icon="pi pi-angle-right" outlined rounded class="mr-2"
+                            @click="selectedProduct(slotProps)" />
+                        <Button icon="pi pi-pencil" outlined rounded severity="warn" class="mr-2"
+                            @click="editStaff(slotProps.data)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteStaff(slotProps.data)" />
                     </template>
@@ -442,12 +446,13 @@ const syncManualInput = (date) => {
         </div>
 
         <!-- Staff Dialog -->
-        <Dialog v-model:visible="staffDialog" :header="staff.id ? 'Таҳрирлаш' : 'Қўшиш'" :style="{ width: '750px' }" :modal="true">
+        <Dialog v-model:visible="staffDialog" :header="staff.id ? 'Таҳрирлаш' : 'Қўшиш'" :style="{ width: '750px' }"
+            :modal="true">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
                     <label for="fullname" class="block font-bold mb-3">Ф.И.О</label>
                     <InputText id="fullname" v-model="staff.fullname" required autofocus
-                        :invalid="submitted && !staff.fullname" fluid  placeholder="Киритинг"/>
+                        :invalid="submitted && !staff.fullname" fluid placeholder="Киритинг" />
                     <small v-if="submitted && !staff.fullname" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-6">
@@ -473,8 +478,7 @@ const syncManualInput = (date) => {
                 </div>
                 <div class="col-span-6">
                     <label for="internal_phone" class="block font-bold mb-3">Ички рақам</label>
-                    <InputText id="internal_phone" v-model="staff.internal_number"
-                        placeholder="xxxx" fluid />
+                    <InputText id="internal_phone" v-model="staff.internal_number" placeholder="xxxx" fluid />
                     <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 4"
                         class="text-red-500">
                         Формат 9999.
@@ -485,41 +489,24 @@ const syncManualInput = (date) => {
                     <!-- <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.birth_date" fluid>
                     </DatePicker> -->
                     <div class="relative">
-                        <input
-                          v-if="isManualInput"
-                          type="date"
-                          v-model="manualInput"
-                          placeholder="yyyy-mm-dd"
-                          class="p-inputtext p-component w-[90%]"
-                          @blur="handleManualInput"
-                          @keydown.enter="handleManualInput"
-                        />
-                        <DatePicker
-                          v-else
-                          :showIcon="true"
-                          :showButtonBar="true"
-                          v-model="staff.birth_date"
-                          @change="syncManualInput"
-                          fluid
-                          class="w-[90%]"
-                          placeholder="Танланг"
-                        />
-                        <button
-                          type="button"
-                          class="absolute right-2 top-1/2 -translate-y-1/2 p-link"
-                          @click="toggleInputMode"
-                        >
-                          <i :class="isManualInput ? 'pi pi-calendar' : 'pi pi-pencil'"></i>
+                        <input v-if="isManualInput" type="date" v-model="manualInput" placeholder="yyyy-mm-dd"
+                            class="p-inputtext p-component w-[90%]" @blur="handleManualInput"
+                            @keydown.enter="handleManualInput" />
+                        <DatePicker v-else :showIcon="true" :showButtonBar="true" v-model="staff.birth_date"
+                            @change="syncManualInput" fluid class="w-[90%]" placeholder="Танланг" />
+                        <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 p-link"
+                            @click="toggleInputMode">
+                            <i :class="isManualInput ? 'pi pi-calendar' : 'pi pi-pencil'"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-span-6">
                     <label for="face_id" class="block font-bold mb-3">FACE ID</label>
-                    <InputNumber v-model="staff.face_id" id="face_id" fluid placeholder="Киритинг"/>
+                    <InputNumber v-model="staff.face_id" id="face_id" fluid placeholder="Киритинг" />
                 </div>
                 <div class="col-span-6">
                     <label for="card_id" class="block font-bold mb-3">Карта рақами</label>
-                    <InputNumber v-model="staff.card_id" id="card_id" fluid placeholder="Киритинг"/>
+                    <InputNumber v-model="staff.card_id" id="card_id" fluid placeholder="Киритинг" />
                 </div>
                 <div class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Ҳолат</label>
@@ -529,13 +516,15 @@ const syncManualInput = (date) => {
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Дан</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid placeholder="Танланг">
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.from_date" required fluid
+                        placeholder="Танланг">
                     </DatePicker>
                     <small v-if="submitted && !staff.from_date" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div v-if="isShowingFromDateToDate" class="col-span-6">
                     <label for="status" class="block font-bold mb-3">Гача</label>
-                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid placeholder="Танланг">
+                    <DatePicker :showIcon="true" :showButtonBar="true" v-model="staff.to_date" required fluid
+                        placeholder="Танланг">
                     </DatePicker>
                     <small v-if="submitted && !staff.to_date" class="text-red-500">Майдон мажбурий</small>
                 </div>
@@ -583,8 +572,7 @@ const syncManualInput = (date) => {
         </Dialog>
 
         <!-- Delete Selected Staff Dialog -->
-        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Тасдиқлаш"
-            :modal="true">
+        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
                 <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми?</span>
