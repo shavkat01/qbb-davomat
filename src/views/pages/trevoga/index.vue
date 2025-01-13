@@ -3,6 +3,7 @@ import axios from '@/service/axiosIns.js';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { inject, onMounted, onUnmounted, ref, watch, computed, reactive } from "vue";
+import { useSocket} from "@/service/useSocket.js";
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -105,7 +106,7 @@ async function getTrevogaDivisions() {
     trevogaDivisions.value = res.data;
 }
 
-socket.on('get_weapons', (m) => {
+useSocket('get_weapons', (m) => {
     console.log('get_weaponsssss', m)
     let founderIndex1 = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
     if (founderIndex1 !== -1) {
@@ -182,7 +183,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
     clearInterval(intervalId);
-    socket.off('get_weapons');    
 });
 
 

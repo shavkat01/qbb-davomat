@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits, inject, watch, ref, onMounted, onUnmounted } from "vue";
 import axios from '@/service/axiosIns.js';
+import { useSocket} from "@/service/useSocket.js";
 
 const socket = inject('socket');
 
@@ -28,7 +29,7 @@ async function getStaffs() {
 
 
 // Socket listener for attendance data
-socket.on('get_attendance', (m) => {
+useSocket('get_attendance', (m) => {
     const foundIndex = staffs.value.staffs.findIndex((item) => item.staff_id === m.staffs[0].staff_id);
 
     if (foundIndex === -1) {
@@ -38,9 +39,6 @@ socket.on('get_attendance', (m) => {
     }
 });
 
-onUnmounted(async () => {
-    socket.off('get_attendance')
-})
 
 // Initialize data on component mount
 onMounted(async () => {

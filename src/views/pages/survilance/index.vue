@@ -4,7 +4,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
 import { computed, inject, onMounted, ref, watch, reactive, onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
-
+import { useSocket} from "@/service/useSocket.js";
 
 const socket = inject('socket');
 
@@ -98,7 +98,7 @@ watch(() => filter.value, () => {
     getStaffs()
 }, { deep: true })
 
-socket.on('get_attendance', (m) => {
+useSocket('get_attendance', (m) => {
     if(filter.value.type != 1) return
     let founderIndex = staffs.value.findIndex(item => item.staff_id == m.staffs[0].staff_id)
     if (founderIndex == -1) {
@@ -107,22 +107,19 @@ socket.on('get_attendance', (m) => {
         staffs.value.splice(founderIndex, 1)
         staffs.value.unshift(m.staffs[0])
     }
-})
+});
 
-socket.on('get_weapons', (m) => {
+
+useSocket('get_weapons', (m) => {
     console.log('Connected to get_weapons channel', m)
+    if(filter.value.type != 2) return
     let founderIndex = staffs.value.findIndex(item => item.staff_id == m[0].staff_id)
     if (founderIndex == -1) {
-        staffs.value.unshift(m.staffs[0])
+        staffs.value.unshift(m[0])
     } else {
         staffs.value.splice(founderIndex, 1)
-        staffs.value.unshift(m.staffs[0])
+        staffs.value.unshift(m[0])
     }
-})
-
-onUnmounted(async () => {
-    socket.off('get_attendance')
-    socket.off('get_weapons')
 })
 
 const themeColors = reactive({

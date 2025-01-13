@@ -5,6 +5,7 @@ import { useToast } from 'primevue/usetoast';
 import { computed, inject, onMounted, ref, watch, reactive, onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
 
+import { useSocket} from "@/service/useSocket.js";
 
 const socket = inject('socket');
 
@@ -101,14 +102,14 @@ watch(() => filter.value, () => {
     getStaffs()
 }, { deep: true })
 
-socket.on('get_weapons', (m) => {
+useSocket('get_weapons', (m) => {
     console.log('Connected to get_weapons channel', m)
     let founderIndex = staffs.value.staffs.findIndex(item => item.staff_id == m[0].staff_id)
     if (founderIndex !== -1) {
         staffs.value.staffs[founderIndex].weapon_status = m[0].weapon_status
     }
 })
-socket.on('get_attendance', (m) => {
+useSocket('get_attendance', (m) => {
     console.log('Connected to get_attendance channel', m)
     staffs.value.all_staffs = m.all_staffs
     staffs.value.on_time_staff = m.on_time_staff
@@ -146,12 +147,6 @@ socket.on('get_attendance', (m) => {
         }
     }
 })
-
-
-onUnmounted(() => {
-  socket.off('get_weapons');
-  socket.off('get_attendance');
-});
 
 const withWeapon = computed(() => {
     if (staffs.value?.staffs) {

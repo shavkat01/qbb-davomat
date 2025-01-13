@@ -3,6 +3,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { onMounted, ref, watch, inject, computed, onUnmounted } from 'vue';
 import axios from '@/service/axiosIns.js';
 import { useBasicStore } from '@/store/basic';
+import { useSocket} from "@/service/useSocket.js";
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 const store = useBasicStore();
@@ -134,7 +135,7 @@ watch([isDarkMode, getPrimary, getSurface, isDarkTheme], () => {
 });
 
 // Socket listener for attendance data
-socket.on('get_attendance', (m) => {
+useSocket('get_attendance', (m) => {
     const foundIndex = staffs.value.staffs.findIndex((item) => item.staff_id === m.staffs[0].staff_id);
 
     if (foundIndex === -1) {
@@ -154,9 +155,6 @@ onMounted(async () => {
     chartOptions.value = setChartOptions();
 });
 
-onUnmounted(async () => {
-    socket.off('get_attendance')
-})
 </script>
 
 <template>
