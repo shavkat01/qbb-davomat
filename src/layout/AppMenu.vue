@@ -12,6 +12,7 @@ const model = ref([
             { label: 'Давомат', icon: 'pi pi-fw pi-calendar', to: '/attendance' },
             { label: 'Онлайн кузатув', icon: 'pi pi-fw pi-video', to: '/survilance' },
             { label: 'Йиғин', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
+            { label: 'Муҳим саналар', icon: 'pi pi-fw pi-calendar-clock', to: '/special-dates' },
 
         ]
     },

@@ -308,7 +308,7 @@ function getImage(img) {
                 <Column field="is_here" header="Сўнги амал вақти" sortable>
                     <template #body="slotProps">
                         <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
-                            v-if="slotProps.data.is_here || slotProps.data.type == 1" class="flex items-center">
+                            v-if="slotProps.data.is_here == true" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-in"></i>

@@ -36,6 +36,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/trevoga/index.vue')
                 },
                 {
+                    path: '/special-dates',
+                    name: 'special-dates',
+                    component: () => import('@/views/pages/specialDates/index.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')

@@ -116,8 +116,6 @@ onMounted(async () => {
                     CloseSound();
                 });
                 getCameraStatusAndOpen(filter.value.type)
-
-
             }).catch(async () => {
                 //外部回调
                 
