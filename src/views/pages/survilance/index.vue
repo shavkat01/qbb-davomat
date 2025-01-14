@@ -63,6 +63,7 @@ function getDivisions() {
 function getStatus() {
     return axios.get('/references/get-status');
 }
+let jsDecoder;
 
 
 // Load ranks and divisions from the respective endpoints
@@ -189,7 +190,6 @@ function getImage(img) {
 
 const infoBodyCameraDialog = ref()
 
-let jsDecoder;
 
 async function loadScripts() {
     const scripts = [
@@ -219,12 +219,6 @@ async function getCameraStatusAndOpen(type) {
     infoBodyCameraDialog.value = data;
     openCam()
 }
-
-
-
-
-
-
 
 
 const cameraClosing = ref(false)
