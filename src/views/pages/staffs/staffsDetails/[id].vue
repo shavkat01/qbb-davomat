@@ -6,6 +6,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from "vue-router";
 
 
+
 const route = useRoute();
 const toast = useToast();
 const dt = ref();
@@ -71,7 +72,7 @@ function getImage(img) {
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="fullname" header="Ф.И.О" sortable style="min-width: 12rem"></Column>
+                <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 12rem"></Column>
                 <Column field="status" header="Holat" sortable style="min-width: 12rem"></Column>
                 <Column field="from_date" header="Dan" sortable style="min-width: 12rem"></Column>
                 <Column field="to_date" header="Gacha" sortable style="min-width: 12rem"></Column>

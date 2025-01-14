@@ -2,10 +2,12 @@
 import axios from '@/service/axiosIns.js';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
-import { computed, inject, onMounted, ref, watch, reactive, onUnmounted } from 'vue';
+import { computed, inject, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
 
-import { useSocket} from "@/service/useSocket.js";
+import { useSocket } from "@/service/useSocket.js";
+
+
 
 const socket = inject('socket');
 
@@ -155,17 +157,29 @@ const withWeapon = computed(() => {
 });
 
 
+// const themeColors = reactive({
+//     darkMode: {
+//         1: '!bg-[#004d004C] text-white',
+//         2: '!bg-[#8053004C] text-white',
+//         3: '!bg-[#7d000024] text-white',
+//     },
+//     lightMode: {
+//         1: '!bg-[#007D004C] text-dark',
+//         2: '!bg-[#FFA5004C] text-dark',
+//         3: '!bg-[#7D00004C] text-dark',
+//     },
+// });
 const themeColors = reactive({
-  darkMode: {
-    1: '!bg-[#004d004C] text-white',
-    2: '!bg-[#8053004C] text-white',
-    3: '!bg-[#7d000024] text-white',
-  },
-  lightMode: {
-    1: '!bg-[#007D004C] text-dark',
-    2: '!bg-[#FFA5004C] text-dark',
-    3: '!bg-[#7D00004C] text-dark',
-  },
+    darkMode: {
+        1: '!bg-green-700 text-white',
+        2: '!bg-orange-700 text-white',
+        3: '!bg-red-700 text-white',
+    },
+    lightMode: {
+        1: '!bg-[#007D004C] text-dark',
+        2: '!bg-[#FFA5004C] text-dark',
+        3: '!bg-[#7D00004C] text-dark',
+    },
 });
 
 
@@ -174,16 +188,16 @@ const isDarkMode = computed(() => document.documentElement.classList.contains('a
 
 
 const rowClass = (data) => {
-  const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
-  const typeClass = themeColors[mode][data.type];
-  return typeClass || ''; // Fallback to empty string if type doesn't match
+    const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
+    const typeClass = themeColors[mode][data.type];
+    return typeClass || ''; // Fallback to empty string if type doesn't match
 };
 
 function formatDate(date) {
-  if (!date) return null;
-  const d = new Date(date);
-  const pad = (num) => String(num).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    if (!date) return null;
+    const d = new Date(date);
+    const pad = (num) => String(num).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
 
@@ -202,10 +216,10 @@ function editStaff(params) {
 }
 
 function saveChangeStatus(params) {
-    if(visibleRight.value.face_id){
-        if(!changeStatus.value) toast.add({ severity: 'error', summary: 'Holat o\'zgartirilmadi', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
+    if (visibleRight.value.face_id) {
+        if (!changeStatus.value) toast.add({ severity: 'error', summary: 'Holat o\'zgartirilmadi', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
 
-        axios.put(`/events/update-face-event/`, {face_id : visibleRight.value.face_id, type: changeStatus.value});
+        axios.put(`/events/update-face-event/`, { face_id: visibleRight.value.face_id, type: changeStatus.value });
         getStaffs()
         toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
     }
@@ -227,8 +241,7 @@ function getImage(img) {
             <DataTable ref="dt" v-model:selection="selectedProducts" :rowClass="rowClass" :value="staffs.staffs"
                 dataKey="id" :paginator="true" :rows="10" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
-                v-on:row-click="enterToHistory"
+                :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]" v-on:row-click="enterToHistory"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
                 <template #header>
                     <div>
@@ -243,7 +256,7 @@ function getImage(img) {
                             </div>
                             <div class="col-span-2">
                                 <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
-                                    optionValue="id" placeholder="Бўлими" fluid showClear />
+                                    optionValue="id" placeholder="Йўналиши" fluid showClear />
                             </div>
                             <div class="col-span-2">
                                 <Select v-model="filter.type" :options="typeList" optionLabel="name" optionValue="id"
@@ -268,7 +281,7 @@ function getImage(img) {
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="25" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.О" sortable>
+                <Column field="fullname" header="Ф.И.Ш" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.fullname }}
                     </template>
@@ -276,7 +289,7 @@ function getImage(img) {
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
                 <Column field="state" header="Ҳозирда" sortable></Column>
-                <Column field="first_time" header="Келган вақти" sortable>
+                <Column field="first_time" header="Ишга келган вақти" sortable>
                     <template #body="slotProps">
                         <div v-if="slotProps.data.first_time" class="flex items-center">
                             <div
@@ -292,7 +305,7 @@ function getImage(img) {
                         </div>
                     </template>
                 </Column>
-                <Column field="is_here" header="Қаерда" sortable>
+                <Column field="is_here" header="Сўнги амал вақти" sortable>
                     <template #body="slotProps">
                         <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
                             v-if="slotProps.data.is_here || slotProps.data.type == 1" class="flex items-center">
@@ -325,31 +338,33 @@ function getImage(img) {
                             <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
                                 v-if="slotProps.data.weapon_status == false"
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
-                                :class="{'h-16' : slotProps.data.weapon_time}">
-                                <i class="pi pi-check" :class="{'mr-4 bg-green-700 dark:bg-green-600 p-2 rounded-lg' : slotProps.data.weapon_time}"></i>
+                                :class="{ 'h-16': slotProps.data.weapon_time }">
+                                <i class="pi pi-check"
+                                    :class="{ 'mr-4 bg-green-700 dark:bg-green-600 p-2 rounded-lg': slotProps.data.weapon_time }"></i>
                                 <div v-if="slotProps.data.weapon_time" class="flex gap-2">
                                     <div>
                                         <i class="pi pi-calendar mr-1"></i>
-                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0,5) }}
+                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0, 5) }}
                                     </div>
                                     <div>
                                         <i class="pi pi-clock mr-1"></i>
-                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0,5) }}
+                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0, 5) }}
                                     </div>
                                 </div>
                             </div>
                             <div v-tooltip.top="{ value: `Қуролланмаган`, showDelay: 200, hideDelay: 300 }" v-else
                                 class="px-4 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
                                 :class="{ 'h-16': slotProps.data.weapon_time }">
-                                <i class="pi pi-times" :class="{ 'mr-4 bg-red-700 dark:bg-red-600 p-2 rounded-lg': slotProps.data.weapon_time }"></i>
+                                <i class="pi pi-times"
+                                    :class="{ 'mr-4 bg-red-700 dark:bg-red-600 p-2 rounded-lg': slotProps.data.weapon_time }"></i>
                                 <div v-if="slotProps.data.weapon_time" class="flex gap-2">
                                     <div>
                                         <i class="pi pi-calendar mr-1"></i>
-                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0,5) }}
+                                        {{ slotProps.data.weapon_time.split(' ')[0].slice(0, 5) }}
                                     </div>
                                     <div>
                                         <i class="pi pi-clock mr-1"></i>
-                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0,5) }}
+                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0, 5) }}
                                     </div>
                                 </div>
                             </div>
@@ -358,7 +373,8 @@ function getImage(img) {
                 </Column>
                 <Column header="Aмаллар">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" :disabled="slotProps.data.division_id != 2" rounded severity="warn" class="mx-2" @click="editStaff(slotProps.data)" />
+                        <Button icon="pi pi-pencil" v-if="slotProps.data.division_id == 2" rounded severity="warn"
+                            class="mx-2" @click="editStaff(slotProps.data)" />
                     </template>
                 </Column>
                 <ColumnGroup type="footer">
@@ -456,12 +472,13 @@ function getImage(img) {
             </DataTable>
         </div>
         <Drawer v-model:visible="visibleRight" header="Ҳолат ўзгартириш" position="right">
-            <Select v-model="changeStatus" :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{id:4, name: 'Binoda'}, {id:5, name: 'Binoda emas'}] : [{id:1, name: 'Keldi'}, {id:2, name: 'Kech qoldi'}, {id:5, name: 'Binoda emas'}]" optionLabel="name" optionValue="id"
-                placeholder="Танланг" required fluid />
+            <Select v-model="changeStatus"
+                :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{ id: 4, name: 'Binoda' }, { id: 5, name: 'Binoda emas' }] : [{ id: 1, name: 'Keldi' }, { id: 2, name: 'Kech qoldi' }, { id: 5, name: 'Binoda emas' }]"
+                optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
             <div class="flex justify-around mt-10">
                 <Button severity="danger" icon="pi pi-times" @click="visibleRight = false" />
                 <Button severity="success" icon="pi pi-check" @click="saveChangeStatus" />
-            </div>    
+            </div>
         </Drawer>
     </div>
 </template>

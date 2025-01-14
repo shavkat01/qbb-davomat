@@ -55,7 +55,7 @@ onMounted(async () => {
             </h3>
             <div class="grid grid-cols-12 gap-3">
                 <div class="col-span-12">
-                    <div class="bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
                                 <span class="block text-muted-color font-medium mb-2"> Рўйхат бўйича </span>
@@ -70,7 +70,7 @@ onMounted(async () => {
                     </div>
                 </div>
                 <div class="col-span-12">
-                    <div class="bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
                                 <span class="block text-muted-color font-medium mb-2"> Вақтида келди </span>
@@ -85,7 +85,7 @@ onMounted(async () => {
                     </div>
                 </div>
                 <div class="col-span-12">
-                    <div class="bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
                                 <span class="block text-muted-color font-medium mb-2"> Кеч қолди </span>
@@ -100,7 +100,7 @@ onMounted(async () => {
                     </div>
                 </div>
                 <div class="col-span-12">
-                    <div class="bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
                                 <span class="block text-muted-color font-medium mb-2"> Келмади </span>
@@ -123,7 +123,7 @@ onMounted(async () => {
             </h3>
             <div class="grid grid-cols-12 gap-4">
                 <div v-for="item in attendance" class="col-span-6 lg:col-span-6 xl:col-span-6">
-                    <div class="bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0" @click="clickCard(item)">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0" @click="clickCard(item)">
                         <div class="flex justify-between">
                             <div>
                                 <span class="block text-muted-color font-medium mb-2"> {{ item.name }} </span>

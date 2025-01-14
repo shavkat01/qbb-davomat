@@ -1,9 +1,11 @@
 <script setup>
 import axios from '@/service/axiosIns.js';
+import { useSocket } from "@/service/useSocket.js";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import { inject, onMounted, onUnmounted, ref, watch, computed, reactive } from "vue";
-import { useSocket} from "@/service/useSocket.js";
+import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from "vue";
+
+
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -112,14 +114,14 @@ useSocket('get_weapons', (m) => {
     if (founderIndex1 !== -1) {
         staffsAttandance.value[founderIndex1].weapon_status = m[0].weapon_status
     }
-    
+
     let founderIndex2 = staffs.value.findIndex(item => item.staff_id == m[0].staff_id)
     if (founderIndex2 !== -1) {
         trevogaDivisions.value.forEach(item => {
-            if(item.division_id == staffs.value[founderIndex2].division_id){
-                if(m[0].weapon_status == false){
+            if (item.division_id == staffs.value[founderIndex2].division_id) {
+                if (m[0].weapon_status == false) {
                     item.weapon_total = typeof item.weapon_total == 'string' ? parseFloat(item.weapon_total.split('.')[0]) + 1 : item.weapon_total + 1
-                }else if(m[0].weapon_status == true){
+                } else if (m[0].weapon_status == true) {
                     item.weapon_total = typeof item.weapon_total == 'string' ? item.weapon_total.split('.')[0] == 0 ? 0 : parseFloat(item.weapon_total.split('.')[0]) - 1 : item.weapon_total == 0 ? 0 : item.weapon_total - 1
                 }
             }
@@ -128,12 +130,12 @@ useSocket('get_weapons', (m) => {
 })
 
 socket.on('current_trevoga', async (m) => {
-    if(m.status){
+    if (m.status) {
         getCurrentTrevoga()
         getTrevogaDivisions()
         elapsedTime.value = '';
         trevogaStatus.value = 'not_given';
-    }else{
+    } else {
         getCurrentTrevoga()
     }
 })
@@ -144,24 +146,24 @@ socket.on('trevoga_divisions', (m) => {
 socket.on('trevoga_staffs', (m) => {
     console.log('Connected to trevoga_staffs channel', m)
     let founderIndex = staffsAttandance.value.findIndex(item => item.staff_id == m[0].staff_id)
-    if(filter.value.attendance == '1' && m[0].type == '1'){
-        if(founderIndex == -1){
+    if (filter.value.attendance == '1' && m[0].type == '1') {
+        if (founderIndex == -1) {
             staffsAttandance.value.unshift(m[0])
-        }else{
+        } else {
             staffsAttandance.value[founderIndex] = m[0]
         }
-    }else if(filter.value.attendance == '2' && m[0].type == '2'){
-        if(founderIndex == -1){
+    } else if (filter.value.attendance == '2' && m[0].type == '2') {
+        if (founderIndex == -1) {
             staffsAttandance.value.unshift(m[0])
-        }else{
+        } else {
             staffsAttandance.value[founderIndex] = m[0]
         }
-    }else if(filter.value.attendance == '3' && (m[0].type == '1' || m[0].type == '2')){
-        if(founderIndex){
+    } else if (filter.value.attendance == '3' && (m[0].type == '1' || m[0].type == '2')) {
+        if (founderIndex) {
             staffsAttandance.value.splice(founderIndex, 1)
         }
-    }else if(m[0].type == '1' || m[0].type == '2'){
-        if(founderIndex){
+    } else if (m[0].type == '1' || m[0].type == '2') {
+        if (founderIndex) {
             staffsAttandance.value[founderIndex] = m[0]
         }
     }
@@ -187,16 +189,16 @@ onUnmounted(() => {
 
 
 const themeColors = reactive({
-  darkMode: {
-    1: '!bg-[#004d004C] text-white',
-    2: '!bg-[#8053004C] text-white',
-    3: '!bg-[#7d000024] text-white',
-  },
-  lightMode: {
-    1: '!bg-[#007D004C] text-dark',
-    2: '!bg-[#FFA5004C] text-dark',
-    3: '!bg-[#7D00004C] text-dark',
-  },
+    darkMode: {
+        1: '!bg-[#004d004C] text-white',
+        2: '!bg-[#8053004C] text-white',
+        3: '!bg-[#7d000024] text-white',
+    },
+    lightMode: {
+        1: '!bg-[#007D004C] text-dark',
+        2: '!bg-[#FFA5004C] text-dark',
+        3: '!bg-[#7D00004C] text-dark',
+    },
 });
 
 
@@ -205,16 +207,16 @@ const isDarkMode = computed(() => document.documentElement.classList.contains('a
 
 
 const rowClass = (data) => {
-  const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
-  const typeClass = themeColors[mode][data.type];
-  return typeClass || ''; // Fallback to empty string if type doesn't match
+    const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
+    const typeClass = themeColors[mode][data.type];
+    return typeClass || ''; // Fallback to empty string if type doesn't match
 };
 
 function createTrevoga(event) {
     try {
         confirm.require({
             target: event.currentTarget,
-            message: 'Сиз ростдан ҳам тревога хабарини юбормоқчимисиз',
+            message: 'Сиз ростдан ҳам Йиғин хабарини юбормоқчимисиз',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
                 label: "Yo'q",
@@ -233,7 +235,7 @@ function createTrevoga(event) {
                 divisions.value = divisionResponse.data;
                 const res = await axios.get('/events/get-trevoga-staffs')
                 staffs.value = res.data;
-                
+
                 toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
             },
             reject: () => {
@@ -249,7 +251,7 @@ function reset(event) {
     try {
         confirm.require({
             target: event.currentTarget,
-            message: 'Сиз ростдан ҳам тревога хабарини қайта созламоқчимисиз?',
+            message: 'Сиз ростдан ҳам Йиғин хабарини қайта созламоқчимисиз?',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
                 label: "Yo'q",
@@ -297,10 +299,10 @@ function getImage(img) {
             <div class="card">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <Button @click="createTrevoga($event)" :disabled="trevogaStatus !== 'not_given'" severity="danger"
-                        label="Submit">Тревога бериш</Button>
+                        label="Submit">Йиғин бериш</Button>
                     <div v-if="trevogaStatus !== 'not_given'" class="flex items-center gap-10">
                         <h3 class="">
-                            <span class="text-xl">Тревога берилган вақт:</span>
+                            <span class="text-xl">Йиғин берилган вақт:</span>
                             <span class="text-xl text-gray-400 ml-3">{{ currentTrevoga?.begin_time?.split(' ')[1]}}</span>
                         </h3>
                         <div>
@@ -368,7 +370,8 @@ function getImage(img) {
                                 </div>
                                 <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
                                     class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-700 text-white rounded-lg shrink-0 cursor-pointer">
-                                    {{ typeof item.weapon_total == "string" ? item.weapon_total.split('.')[0] : item.weapon_total }}
+                                    {{ typeof item.weapon_total == "string" ? item.weapon_total.split('.')[0] :
+                                        item.weapon_total }}
                                 </div>
                             </div>
                         </div>
@@ -379,7 +382,8 @@ function getImage(img) {
         <div v-if="trevogaStatus !== 'not_given'" class="col-span-12 xl:col-span-6">
             <div class="card">
                 <div class="text-center font-semibold text-xl">
-                    <div class="py-1 px-4 inline-block bg-gray-200 dark:bg-gray-800 text-black dark:text-white rounded-lg shrink-0 cursor-pointer">
+                    <div
+                        class="py-1 px-4 inline-block bg-gray-200 dark:bg-gray-800 text-black dark:text-white rounded-lg shrink-0 cursor-pointer">
                         {{ filter.division.division_name }}:
                     </div>
                 </div>
@@ -414,10 +418,10 @@ function getImage(img) {
                         </div>
                     </div>
                 </div>
-                <DataTable ref="dt" :rowClass="rowClass" :value="staffsAttandance" dataKey="id" :paginator="true" :rows="8"
-                    :loading="loading"
+                <DataTable ref="dt" :rowClass="rowClass" :value="staffsAttandance" dataKey="id" :paginator="true"
+                    :rows="8" :loading="loading"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[5,8, 10, 15, 25, 50, 100]"
+                    :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
                     currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
 
                     <template #empty>
@@ -430,7 +434,7 @@ function getImage(img) {
                             <Image :src="getImage(slotProps.data.photo)" alt="Image" style="height: 30px;" preview />
                         </template>
                     </Column>
-                    <Column field="fullname" header="Ф.И.О" sortable style="min-width: 4rem"></Column>
+                    <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 4rem"></Column>
                     <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
                     <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
                     <Column field="type" header="Қуролланган" sortable>
@@ -449,7 +453,7 @@ function getImage(img) {
                 </DataTable>
             </div>
         </div>
-        
+
     </div>
     <Toast />
     <ConfirmPopup></ConfirmPopup>

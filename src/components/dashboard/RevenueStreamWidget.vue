@@ -18,9 +18,9 @@ const isDarkMode = computed(() => document.documentElement.classList.contains('a
 // Define background colors dynamically
 function getBackgroundColor(type) {
     if (isDarkMode.value) {
-        if (type === 1) return 'rgba(0, 77, 0, 0.7)'; // Dark green
-        if (type === 2) return 'rgba(128, 83, 0, 0.7)'; // Dark orange
-        if (type === 3) return 'rgba(125, 0, 0, 0.7)'; // Dark red
+        if (type === 1) return 'green'; // Dark green
+        if (type === 2) return 'orange'; // Dark orange
+        if (type === 3) return 'red'; // Dark red
     } else {
         if (type === 1) return 'rgba(0, 125, 0, 0.7)'; // Bright green
         if (type === 2) return 'rgba(255, 165, 0, 0.7)'; // Bright orange

@@ -10,6 +10,7 @@ import { defineProps, onMounted, ref } from 'vue';
 
 
 
+
 const props = defineProps({
     staffs: {
         type: Array,
@@ -58,7 +59,7 @@ function getImage(img) {
                     <Image :src="getImage(slotProps.data.photo)" alt="Image" width="25" preview />
                 </template>
             </Column>
-            <Column field="fullname" header="Ф.И.О" sortable style="min-width: 4rem"></Column>
+            <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 4rem"></Column>
             <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
             <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
             <Column field="division_name" header="Bo'lim" sortable style="min-width: 4rem"></Column>

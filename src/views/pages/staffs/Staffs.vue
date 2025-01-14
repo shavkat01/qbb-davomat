@@ -12,6 +12,8 @@ import { useRouter } from "vue-router";
 
 
 
+
+
 const router = useRouter();
 const toast = useToast();
 const dt = ref();
@@ -417,7 +419,7 @@ const syncManualInput = (date) => {
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.О" sortable>
+                <Column field="fullname" header="Ф.И.Ш" sortable>
                     <template #body="slotProps">
                         <a @click="selectedProduct(slotProps)" class="text-blue-500">
                             {{ slotProps.data.fullname }}
@@ -427,7 +429,7 @@ const syncManualInput = (date) => {
                 <Column field="phone_number" header="Телефон" sortable></Column>
                 <Column field="status" header="Ҳолат" sortable></Column>
                 <Column field="rank_name" header="Унвон" sortable></Column>
-                <Column field="division_name" header="Бўлим" sortable></Column>
+                <Column field="division_name" header="Йўналиш" sortable></Column>
                 <Column field="internal_number" header="Ички рақам" sortable style="min-width: 1rem"></Column>
                 <Column field="face_id" header="FACE ID" sortable></Column>
                 <Column field="card_id" header="Карта рақами" sortable></Column>
@@ -450,7 +452,7 @@ const syncManualInput = (date) => {
             :modal="true">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
-                    <label for="fullname" class="block font-bold mb-3">Ф.И.О</label>
+                    <label for="fullname" class="block font-bold mb-3">Ф.И.Ш</label>
                     <InputText id="fullname" v-model="staff.fullname" required autofocus
                         :invalid="submitted && !staff.fullname" fluid placeholder="Киритинг" />
                     <small v-if="submitted && !staff.fullname" class="text-red-500">Майдон мажбурий</small>
@@ -471,7 +473,7 @@ const syncManualInput = (date) => {
                     <small v-if="submitted && !staff.rank_id" class="text-red-500">Майдон мажбурий</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="division" class="block font-bold mb-3">Бўлим</label>
+                    <label for="division" class="block font-bold mb-3">Йўналиш</label>
                     <Select v-model="staff.division_id" :options="divisions" optionLabel="name" optionValue="id"
                         placeholder="Танланг" required fluid />
                     <small v-if="submitted && !staff.division_id" class="text-red-500">Майдон мажбурий</small>
