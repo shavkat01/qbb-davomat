@@ -604,9 +604,9 @@ window.onresize = function () {
         </div>
         <div class="card py-2 col-span-6">
             <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id" :paginator="true"
-                :rows="10" :loading="loading" :filters="filters"
+                :rows="12" :loading="loading" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                :rowsPerPageOptions="[5, 8, 10, 15, 25, 50, 100]"
+                :rowsPerPageOptions="[5, 8, 12, 15, 25, 50, 100]"
                 currentPageReportTemplate="{first} - {last}. {totalRecords} дан">
                 <template #header>
                     <div>
