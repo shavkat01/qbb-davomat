@@ -373,7 +373,7 @@ function getImage(img) {
                 </Column>
                 <Column header="Aмаллар">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" v-if="slotProps.data.division_id == 2" rounded severity="warn"
+                        <Button icon="pi pi-pencil" v-if="slotProps.data.role_id == 1 || slotProps.data.role_id == 2" rounded severity="warn"
                             class="mx-2" @click="editStaff(slotProps.data)" />
                     </template>
                 </Column>
