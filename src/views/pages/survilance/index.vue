@@ -45,7 +45,6 @@ async function getStaffs() {
     const staffResponse = await axios.get(url);
     staffs.value = staffResponse.data;
     loading.value = false;
-    getCameraStatusAndOpen(filter.value.type)
 
 }
 
@@ -130,6 +129,7 @@ onMounted(async () => {
 watch(() => filter.value, () => {
     infoBodyCameraDialog.value.value = null;
     getStaffs()
+    getCameraStatusAndOpen(filter.value.type)
 }, { deep: true })
 
 useSocket('get_attendance', (m) => {
