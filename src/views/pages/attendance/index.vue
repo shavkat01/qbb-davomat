@@ -216,11 +216,10 @@ function editStaff(params) {
     visibleRight.value = params
 }
 
-function saveChangeStatus(params) {
-    if (visibleRight.value.face_id) {
+async function saveChangeStatus(params) {
+   if (visibleRight.value.face_id) {
         if (!changeStatus.value) toast.add({ severity: 'error', summary: 'Holat o\'zgartirilmadi', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
-
-        axios.put(`/events/update-face-event/`, { face_id: visibleRight.value.face_id, type: changeStatus.value });
+        await axios.put(`/events/update-face-event/`, { face_id: visibleRight.value.face_id, type: changeStatus.value });
         getStaffs()
         toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
     }
@@ -478,7 +477,7 @@ function getImage(img) {
         <Drawer v-model:visible="visibleRight" header="Ҳолат ўзгартириш" position="right">
 
             <Select v-model="changeStatus" v-if="userData.role_id == 1"
-                :options="[{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 5, name: 'Бинода эмас' }]"
+                :options="[{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 3, name: 'Келмади' }, { id: 4, name: 'Бинода' }, { id: 5, name: 'Бинода эмас' }]"
                 optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
             <Select v-model="changeStatus" v-else
                 :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{ id: 4, name: 'Бинода' }, { id: 5, name: 'Бинода эмас' }] : [{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 5, name: 'Бинода эмас' }]"
