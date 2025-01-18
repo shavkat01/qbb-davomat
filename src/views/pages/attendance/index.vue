@@ -476,9 +476,14 @@ function getImage(img) {
             </DataTable>
         </div>
         <Drawer v-model:visible="visibleRight" header="Ҳолат ўзгартириш" position="right">
-            <Select v-model="changeStatus"
-                :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{ id: 4, name: 'Binoda' }, { id: 5, name: 'Binoda emas' }] : [{ id: 1, name: 'Keldi' }, { id: 2, name: 'Kech qoldi' }, { id: 5, name: 'Binoda emas' }]"
+
+            <Select v-model="changeStatus" v-if="userData.role_id == 1"
+                :options="[{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 5, name: 'Бинода эмас' }]"
                 optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
+            <Select v-model="changeStatus" v-else
+                :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{ id: 4, name: 'Бинода' }, { id: 5, name: 'Бинода эмас' }] : [{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 5, name: 'Бинода эмас' }]"
+                optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
+            
             <div class="flex justify-around mt-10">
                 <Button severity="danger" icon="pi pi-times" @click="visibleRight = false" />
                 <Button severity="success" icon="pi pi-check" @click="saveChangeStatus" />
