@@ -43,10 +43,10 @@ function getImage(img) {
 <template>
     <div class="card">
         <div class="font-semibold text-xl mb-4">{{ status }}</div>
-        <DataTable ref="dt" :value="staffs" dataKey="id" :paginator="true" :rows="10" :loading="loading"
+        <DataTable ref="dt" :value="staffs" dataKey="id" :paginator="true" :rows="11" :loading="loading"
             :filters="filters"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-            :rowsPerPageOptions="[5, 13, 25]"
+            :rowsPerPageOptions="[5, 11, 25, 200]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
 
             <template #empty>

@@ -12,7 +12,7 @@ const props = defineProps({
     }
 });
 
-const emits = defineEmits(["card-clicked"]);
+const emits = defineEmits(["card-clicked", "export-to-excel"]);
 
 function clickCard(item) {
     emits("card-clicked", item);
@@ -118,9 +118,13 @@ onMounted(async () => {
         </div>
 
         <div class="col-span-6 card p-4">
-            <h3 class="text-2xl mb-3">
-                Рўйхатда
-            </h3>
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl">
+                    Рўйхатда
+                </h3>
+                <Button class="" label="Экспорт" severity="success" text icon="pi pi-file-excel"
+                @click="emits('export-to-excel')" />
+            </div>
             <div class="grid grid-cols-12 gap-4">
                 <div v-for="item in attendance" class="col-span-6 lg:col-span-6 xl:col-span-6">
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0" @click="clickCard(item)">
