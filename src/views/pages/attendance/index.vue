@@ -19,6 +19,7 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
+const userData = JSON.parse(localStorage.getItem('userData'));
 
 const filter = ref({
     division_id: null,
@@ -364,7 +365,6 @@ function getImage(img) {
                                     </div>
                                     <div>
                                         <i class="pi pi-clock mr-1"></i>
-                                        {{ slotProps.data.weapon_time.split(' ')[1].slice(0, 5) }}
                                     </div>
                                 </div>
                             </div>
@@ -373,7 +373,9 @@ function getImage(img) {
                 </Column>
                 <Column header="Aмаллар">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" v-if="slotProps.data.role_id == 1" rounded severity="warn"
+                        <Button icon="pi pi-pencil" v-if="userData.role_id == 1" rounded severity="warn"
+                            class="mx-2" @click="editStaff(slotProps.data)" />
+                        <Button icon="pi pi-pencil" v-else-if="slotProps.data.role_id == 1" rounded severity="warn"
                             class="mx-2" @click="editStaff(slotProps.data)" />
                         <Button icon="pi pi-pencil" v-else-if="slotProps.data.role_id == 2" rounded severity="warn"
                             class="mx-2" @click="editStaff(slotProps.data)" />
