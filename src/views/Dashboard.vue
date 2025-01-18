@@ -161,11 +161,11 @@ const exportToExcel = () => {
 
     // Create workbook and append worksheets
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, listDataSheet, "List Data");
+    XLSX.utils.book_append_sheet(workbook, listDataSheet, "Рўйхатда");
     XLSX.utils.book_append_sheet(workbook, tableBodySheet, "Ходимлар");
 
     // Export file
-    XLSX.writeFile(workbook, "CombinedData.xlsx");
+    XLSX.writeFile(workbook, "Маълумотнома.xlsx");
 };
 
 </script>
