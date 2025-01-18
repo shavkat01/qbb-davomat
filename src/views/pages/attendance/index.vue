@@ -6,6 +6,7 @@ import { computed, inject, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
 
 import { useSocket } from "@/service/useSocket.js";
+import * as XLSX from 'xlsx';
 
 
 
@@ -233,6 +234,57 @@ function getImage(img) {
     return `${import.meta.env.VITE_API_BASE_URL}/public/staff_photos/${img}`;
 }
 
+const exportToExcel = () => {
+  // Prepare table body data
+  const tableBody = staffs.value.staffs.map(row => ({
+    "Ф.И.Ш": row.fullname,
+    Телефон: row.phone_number,
+    Унвон: row.rank_name,
+    Ҳозирда: row.state,
+    "Ишга келган вақти": row.first_time || "-",
+    "Сўнги амал вақти": row.is_here == null ? "Бугун ишга келмаган" : row.is_here ? "Бинода " + "(" + row.last_time + ")"  : "Бинода эмас " + "(" + row.last_time + ")",
+    "Қуролланган": row.weapon_status == false ? "Қуролланган " + `${row.weapon_time ? "(" +  row.weapon_time  + ")" : ""}` : "Қуролланмаган " + `${row.weapon_time ? "(" +  row.weapon_time + ")": ""}`,
+  }));
+
+  // Footer data
+  const footerData = [
+    { "Ф.И.Ш": `Рўйхат бўйича: ${staffs.value.all_staffs}` },
+    { "Ф.И.Ш": `Вақтида келганлар: ${staffs.value.on_time_staff.count}` },
+    { "Ф.И.Ш": `Кеч қолганлар: ${staffs.value.late_staff.count}` },
+    { "Ф.И.Ш": `Келмади: ${staffs.value.absent_staff.count}` },
+  ];
+
+  // Merge body and footer
+  const exportData = [...tableBody, {}, ...footerData];
+
+  // Create worksheet
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+  // Customize column widths
+  worksheet["!cols"] = [
+    { wch: 40 }, // Ф.И.Ш
+    { wch: 15 }, // Телефон
+    { wch: 15 }, // Унвон
+    { wch: 12 }, // Ҳозирда
+    { wch: 20 }, // Ишга келган вақти
+    { wch: 25 }, // Сўнги амал вақти
+    { wch: 30 }, // Сўнги амал вақти
+  ];
+
+  // Add header styles (optional)
+  const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
+  for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+    const cell = worksheet[XLSX.utils.encode_cell({ r: 0, c: C })];
+    if (cell) cell.s = { font: { bold: true } };
+  }
+
+  // Create workbook and append worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Staff Data");
+
+  // Export file
+  XLSX.writeFile(workbook, "StaffData.xlsx");
+};
 </script>
 
 <template>
@@ -267,10 +319,12 @@ function getImage(img) {
                                     placeholder="Сана">
                                 </DatePicker>
                             </div>
-                            <div class="col-span-2">
+                            <div class="col-span-4">
                                 <Button label="Aслига қайтариш" icon="pi pi-filter-slash"
                                     :disabled="filters['global'].value || filter.division_id || filter.type || filter?.from_date ? false : true"
                                     @click="clearFilter" />
+                                <Button class="ml-4" label="Экспорт" severity="success" icon="pi pi-file-excel"
+                                    @click="exportToExcel" />
                             </div>
                         </div>
                     </div>
