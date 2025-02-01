@@ -6,14 +6,6 @@ import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
 
-
-
-
-
-
-
-
-
 const router = useRouter();
 const toast = useToast();
 const dt = ref();
@@ -150,7 +142,7 @@ function saveStaff() {
 
     // Check if required fields are filled
     if (staff.value.phone_number && staff.value.phone_number.replace(/\s/g, '').length !== 13) return
-    if (staff.value.internal_number && staff.value.internal_number.trim().length !== 4) return
+    if (staff.value.internal_number && staff.value.internal_number.trim().length !== 3) return
     if (
         staff.value.fullname?.trim() &&
         staff.value.rank_id &&
@@ -480,10 +472,10 @@ const syncManualInput = (date) => {
                 </div>
                 <div class="col-span-6">
                     <label for="internal_phone" class="block font-bold mb-3">Ички рақам</label>
-                    <InputText id="internal_phone" v-model="staff.internal_number" placeholder="xxxx" fluid />
-                    <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 4"
+                    <InputText id="internal_phone" v-model="staff.internal_number" placeholder="xxx" fluid />
+                    <small v-if="submitted && staff.internal_number && staff.internal_number.trim().length !== 3"
                         class="text-red-500">
-                        Формат 9999.
+                        Формат 999.
                     </small>
                 </div>
                 <div class="col-span-6">
