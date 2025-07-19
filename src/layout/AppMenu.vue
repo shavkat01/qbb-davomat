@@ -69,8 +69,13 @@ const model = ref([
             // },
             {
                 label: 'Ходимлар',
-                icon: 'pi pi-fw pi-users',
+                icon: 'pi pi-fw pi-user',
                 to: '/pages/staffs'
+            },
+            {
+                label: 'Boshqalar',
+                icon: 'pi pi-fw pi-users',
+                to: '/pages/persons'
             },
             // {
             //     label: 'Not Found',
