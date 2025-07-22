@@ -431,7 +431,7 @@ function captureImage() {
                     </div>
                 </template>
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="division_name" header="Йўналиш" sortable></Column>
+                <Column field="division_name" header="Бўлими" sortable></Column>
                 <Column field="staff_name" header="Кимга" sortable></Column>
                 <Column header="Расм">
                     <template #body="slotProps">
