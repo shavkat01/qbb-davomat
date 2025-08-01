@@ -36,7 +36,10 @@ app.component('v-select', vSelect)
 import { io } from 'socket.io-client';
 
 const socket = io(`${import.meta.env.VITE_API_BASE_URL}`, {
-//   autoConnect: false,
+    transports: ['websocket'],
+    reconnect: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 2000,
 });
 
 app.provide('socket', socket);
