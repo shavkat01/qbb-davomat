@@ -273,8 +273,8 @@ function getStatusLabel(status) {
                 <span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteProduct" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteProductDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="deleteProduct" />
             </template>
         </Dialog>
 
@@ -284,8 +284,8 @@ function getStatusLabel(status) {
                 <span v-if="product">Are you sure you want to delete the selected products?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteProductsDialog = false" />
-                <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedProducts" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteProductsDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" text @click="deleteSelectedProducts" />
             </template>
         </Dialog>
     </div>

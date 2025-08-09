@@ -560,8 +560,8 @@ const syncManualInput = (date) => {
                 <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteStaffDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteStaff" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="deleteStaff" />
             </template>
         </Dialog>
 
@@ -572,8 +572,8 @@ const syncManualInput = (date) => {
                 <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedStaffs" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="deleteSelectedStaffs" />
             </template>
         </Dialog>
     </div>

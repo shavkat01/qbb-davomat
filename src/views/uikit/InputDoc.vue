@@ -201,7 +201,7 @@ function searchCountry(event) {
 
             <div class="card flex flex-col gap-4">
                 <div class="font-semibold text-xl">ToggleButton</div>
-                <ToggleButton v-model="toggleValue" onLabel="Yes" offLabel="No" :style="{ width: '10em' }" />
+                <ToggleButton v-model="toggleValue" onLabel="Ҳа" offLabel="Йўқ" :style="{ width: '10em' }" />
 
                 <div class="font-semibold text-xl">SelectButton</div>
                 <SelectButton v-model="selectButtonValue" :options="selectButtonValues" optionLabel="name" />

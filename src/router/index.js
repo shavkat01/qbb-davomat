@@ -137,6 +137,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/persons/Staffs.vue')
                 },
                 {
+                    path: '/pages/reception',
+                    name: 'reception',
+                    component: () => import('@/views/pages/reception/Index.vue')
+                },
+                {
                     path: '/pages/crud',
                     name: 'crud',
                     component: () => import('@/views/pages/Crud.vue')

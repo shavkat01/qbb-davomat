@@ -6,6 +6,7 @@ import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch, onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
 import * as faceapi from 'face-api.js';
+let userData = JSON.parse(localStorage.getItem('userData'));
 
 const router = useRouter();
 const toast = useToast();
@@ -44,6 +45,7 @@ const stream = ref(null);
 const capturedImage = ref(null);
 const isFaceDetected = ref(false);
 const isFaceCentered = ref(false);
+const permittingPerson = ref();
 
 async function getStaffs() {
     loading.value = true;
@@ -205,6 +207,15 @@ async function editStaff(staffToEdit) {
     // startCamera();
     stopCamera()
 
+}
+function givePermission() {
+    axios.put(`/persons/update-person/${permittingPerson.value.id}`, {dejurka: userData.id}).then(() => {
+        getStaffs();
+        permittingPerson.value = false;
+        toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Staff put', life: 3000 });
+    }).catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to put staff.', life: 3000 });
+    });
 }
 
 function confirmDeleteStaff(staffToDelete) {
@@ -445,10 +456,16 @@ function captureImage() {
                 <Column field="about" header="Сабаби" sortable></Column>
                 <Column header="Aмаллар" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded severity="warn" class="mr-2"
+                        <div v-if="userData.role_id == 5">
+                            <Button v-show="!slotProps.data.dejurka_name" icon="pi pi-lock-open" outlined rounded severity="warn" class="mr-2"
+                            @click="permittingPerson = slotProps.data" />
+                        </div>
+                        <div v-else>
+                            <Button icon="pi pi-pencil" outlined rounded severity="warn" class="mr-2"
                             @click="editStaff(slotProps.data)" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger"
+                            <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteStaff(slotProps.data)" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>
@@ -555,14 +572,24 @@ function captureImage() {
             </template>
         </Dialog>
 
+        <Dialog v-model:visible="permittingPerson" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+            <div class="flex items-center gap-4">
+                <i class="pi pi-exclamation-triangle !text-3xl" />
+                <span>Сиз бу шаxсга рoстдан ҳам руxсат бермoқчимисиз: {{ staff.fullname }}?</span>
+            </div>
+            <template #footer>
+                <Button label="Йўқ" icon="pi pi-times" text @click="permittingPerson = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="givePermission" />
+            </template>
+        </Dialog>
         <Dialog v-model:visible="deleteStaffDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
                 <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteStaffDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteStaff" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="deleteStaff" />
             </template>
         </Dialog>
 
@@ -572,8 +599,8 @@ function captureImage() {
                 <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedStaffs" />
+                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
+                <Button label="Ҳа" icon="pi pi-check" @click="deleteSelectedStaffs" />
             </template>
         </Dialog>
     </div>

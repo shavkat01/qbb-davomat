@@ -416,75 +416,89 @@ window.onresize = function () {
                         <Tab @click="filter.type = 2" value="1">Қурол</Tab>
                     </TabList>
                     <TabPanels class="!p-0">
-                        <TabPanel value="0" class="flex gap-3 w-full pt-3">
-                            <div v-if="enterStaff" class="w-1/2">
-                                <div class="text-center mb-3">
-                                    <div class="mt-0 font-semibold text-xl">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            Кириш
+                        <TabPanel value="0" class="flex gap-3 w-full pt-3 overflow-hidden">
+                            <Transition
+                                name="slide-left"
+                                mode="out-in"
+                                :key="enterStaff?.staff_id || 'no-enter-staff'"
+                                appear
+                            >
+                                <div v-if="enterStaff" class="w-1/2">
+                                    <div class="text-center mb-3">
+                                        <div class="mt-0 font-semibold text-xl">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                Кириш
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                        <div class="mb-4 w-full flex justify-center">
+                                            <div class="text-center">
+                                                <img :src="getImage(enterStaff.photo)" alt=""
+                                                    class="w-48 rounded object-cover" style="height: 200px;" />
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                {{ enterStaff?.division_name }}
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <div class="mt-0 font-semibold text-xl">{{ enterStaff?.fullname }}</div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                <i class="pi pi-sign-in mr-4"></i>
+                                                {{ enterStaff?.last_time }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
-                                    <div class="mb-4 w-full flex justify-center">
-                                        <div class="text-center">
-                                            <img :src="getImage(enterStaff.photo)" alt=""
-                                                class="w-48 rounded object-cover" style="height: 200px;" />
+                            </Transition>
+                            <Transition
+                                name="slide-right"
+                                mode="out-in"
+                                :key="getOutStaff?.staff_id || 'no-out-staff'"
+                                appear
+                            >
+                                <div v-if="getOutStaff" class="w-1/2">
+                                    <div class="text-center mb-3">
+                                        <div class="mt-0 font-semibold text-xl">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                Чиқиш
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="text-center mt-3">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            {{ enterStaff?.division_name }}
+                                    <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
+                                        <div class="mb-4 w-full flex justify-center">
+                                            <div class="text-center">
+                                                <img :src="getImage(getOutStaff.photo)" alt=""
+                                                    class="w-48 rounded object-cover" style="height: 200px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div class="mt-0 font-semibold text-xl">{{ enterStaff?.fullname }}</div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            <i class="pi pi-sign-in mr-4"></i>
-                                            {{ enterStaff?.last_time }}
+                                        <div class="text-center mt-3">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                {{ getOutStaff?.division_name }}
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="getOutStaff" class="w-1/2">
-                                <div class="text-center mb-3">
-                                    <div class="mt-0 font-semibold text-xl">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            Чиқиш
+                                        <div class="text-center mt-3">
+                                            <div class="mt-0 font-semibold text-xl">{{ getOutStaff?.fullname }}</div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="border border-surface-200 dark:border-surface-700 rounded py-4">
-                                    <div class="mb-4 w-full flex justify-center">
-                                        <div class="text-center">
-                                            <img :src="getImage(getOutStaff.photo)" alt=""
-                                                class="w-48 rounded object-cover" style="height: 200px;" />
-                                        </div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            {{ getOutStaff?.division_name }}
-                                        </div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div class="mt-0 font-semibold text-xl">{{ getOutStaff?.fullname }}</div>
-                                    </div>
-                                    <div class="text-center mt-3">
-                                        <div
-                                            class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            <i class="pi pi-sign-out rotate-180 mr-4"></i>
-                                            {{ getOutStaff?.last_time }}
+                                        <div class="text-center mt-3">
+                                            <div
+                                                class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
+                                                <i class="pi pi-sign-out rotate-180 mr-4"></i>
+                                                {{ getOutStaff?.last_time }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Transition>
                         </TabPanel>
 
                         <TabPanel value="1" class="flex gap-3 w-full pt-3">
@@ -689,5 +703,63 @@ window.onresize = function () {
 <style>
 .menage-staffs .p-datatable-tbody tr {
     cursor: pointer;
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-right-appear-active {
+  transition: all 0.8s ease;
+}
+
+.slide-right-enter-from,
+.slide-right-appear-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-right-enter-to,
+.slide-right-appear-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-right-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+
+
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-left-appear-active {
+  transition: all 0.8s ease;
+}
+
+.slide-left-enter-from,
+.slide-left-appear-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-left-enter-to,
+.slide-left-appear-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-left-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-left-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
 }
 </style>
