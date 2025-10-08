@@ -29,13 +29,7 @@ const statusList = ref([]);
 const staffs = ref([]);
 const staff = ref();
 const selectedProducts = ref();
-const typeList = ref([
-    { id: 1, name: 'Вақтида келганлар' },
-    { id: 2, name: 'Кеч қолганлар' },
-    { id: 3, name: 'Келмади' },
-    { id: 4, name: 'Бинода' },
-    { id: 5, name: 'Бинода эмас' },
-]);
+
 
 
 async function getStaffs() {
@@ -130,7 +124,7 @@ function getImage(img) {
                         <div class="grid grid-cols-12 gap-4">
                             <div class="col-span-4">
                                 <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.from_date" fluid
-                                placeholder="Сана">
+                                :placeholder="$t('date')">
                                 </DatePicker>
                             </div>
                             <div class="col-span-2">
@@ -138,34 +132,34 @@ function getImage(img) {
                                     <InputIcon>
                                         <i class="pi pi-search" />
                                     </InputIcon>
-                                    <InputText v-model="filters['global'].value" placeholder="Қидириш..." />
+                                    <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                                 </IconField>
                             </div>
                         </div>
                     </div>
                 </template>
-                <Column field="is_here" header="Амал" sortable>
+                <Column field="is_here" ::header="$t('actions')" sortable>
                     <template #body="slotProps">
-                        <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                        <div v-tooltip.top="{ value: $t('entry_time'), showDelay: 200, hideDelay: 300 }"
                             v-if="slotProps.data.camera_id == 1" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-in mr-4"></i>
-                                Кирди
+                                {{ $t('entered') }}
                             </div>
                         </div>
-                        <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                        <div v-tooltip.top="{ value: $t('exit_time'), showDelay: 200, hideDelay: 300 }"
                             v-else-if="slotProps.data.camera_id == 2" class="flex items-center">
                             <div
                                 class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                 <i class="pi pi-sign-out mr-4 rotate-180"></i>
-                                Чиқди
+                                {{ $t('exited') }}
                             </div>
                         </div>
                     
                     </template>
                 </Column>
-                <Column header="Вақти" sortable>
+                <Column :header="$t('time')" sortable>
                     <template #body="slotProps">
                         <div v-if="slotProps.data.date" class="flex items-center">
                             <div

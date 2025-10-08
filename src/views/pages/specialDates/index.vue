@@ -34,7 +34,14 @@ const formattedMonth = computed(() => {
   return selectedMonth.value.toLocaleDateString(undefined, options);
 });
 
-const daysOfWeek = ["Якшанба", "Душанба", "Сешанба", "Чоршанба", "Пайшанба", "Жума", "Шанба"];
+const daysOfWeek = [
+  "sunday", 
+  "monday", 
+  "tuesday", 
+  "wednesday", 
+  "thursday", 
+  "friday", 
+  "saturday"];
 
 const calendarDays = computed(() => {
   const firstDayOfMonth = new Date(selectedMonth.value.getFullYear(), selectedMonth.value.getMonth(), 1);
@@ -142,7 +149,7 @@ function getImage(img) {
                 'bg-green-50 dark:bg-green-800' : selectedMonth.toDateString() == currentDate.toDateString()
               }"
               >
-              Бугун 
+              {{ $t('today') }}
             </button>
             <button @click="changeMonth(-1)"
               class="px-4 py-2 text-gray-500 dark:text-gray-400 rounded transition-all hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200">
@@ -163,7 +170,7 @@ function getImage(img) {
         <div
           class="grid grid-cols-7 divide-gray-200 dark:divide-gray-700 border-b border-gray-200 dark:border-gray-700">
           <div v-for="day in daysOfWeek" :key="day" class="p-3.5 text-center font-medium">
-            {{ day }}
+            {{ $t(day) }}
           </div>
         </div>
 
@@ -215,26 +222,26 @@ function getImage(img) {
               <Image :src="getImage(modalData.photo)" class="w-28 rounded-full object-cover mx-auto"  alt="Staff Avatar" preview/>
             </div>
             <div>
-              <p class="flex"><strong class="w-40 block">Йўналиш:</strong> {{ modalData.division_name }}</p>
-              <p class="flex"><strong class="w-40 block">Унвон:</strong> {{ modalData.rank_name }}</p>
-              <p class="flex"><strong class="w-40 block">Ф.И.Ш:</strong> {{ modalData.fullname }}</p>
-              <p class="flex"><strong class="w-40 block">Тел рақам:</strong> {{ modalData.phone_number }}</p>
-              <p class="flex"><strong class="w-40 block">Туғилган кун:</strong> {{ modalData.birth_date }}</p>
-              <p class="flex"><strong class="w-40 block">Ҳолат:</strong> {{ modalData.status }}</p>
+              <p class="flex"><strong class="w-40 block"> {{ $t('photo') }}:</strong> {{ modalData.division_name }}</p>
+              <p class="flex"><strong class="w-40 block"> {{ $t('rank') }}:</strong> {{ modalData.rank_name }}</p>
+              <p class="flex"><strong class="w-40 block"> {{ $t('full_name') }}:</strong> {{ modalData.fullname }}</p>
+              <p class="flex"><strong class="w-40 block">  {{ $t('phone') }}:</strong> {{ modalData.phone_number }}</p>
+              <p class="flex"><strong class="w-40 block">  {{ $t('birthdate') }}:</strong> {{ modalData.birth_date }}</p>
+              <p class="flex"><strong class="w-40 block"> {{ $t('status') }}:</strong> {{ modalData.status }}</p>
             </div>
           </div>
         </template>
         <template v-if="modalType === 'holiday'">
           <div>
-            <p><strong>Байрам:</strong> {{ modalData.name }}</p>
-            <p><strong>Тавсиф:</strong> {{ modalData.description }}</p>
+            <p><strong> {{ $t('holiday') }}:</strong> {{ modalData.name }}</p>
+            <p><strong> {{ $t('description') }}:</strong> {{ modalData.description }}</p>
           </div>
         </template>
         <template v-if="modalType === 'specialDay'">
           <div>
-            <p><strong>Номи:</strong> {{ modalData.name }}</p>
-            <p><strong>Тавсиф:</strong> {{ modalData.description }}</p>
-            <p><strong>Сана:</strong> {{ modalData.date }}</p>
+            <p><strong> {{ $t('holiday') }}:</strong> {{ modalData.name }}</p>
+            <p><strong> {{ $t('description') }}:</strong> {{ modalData.description }}</p>
+            <p><strong> {{ $t('date') }}:</strong> {{ modalData.date }}</p>
           </div>
         </template>
       </p-dialog>

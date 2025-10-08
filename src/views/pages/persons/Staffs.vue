@@ -405,12 +405,12 @@ function captureImage() {
         <div class="card">
             <Toolbar class="mb-6">
                 <template #start>
-                    <Button label="Янги" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-                    <Button label="Ўчириш" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
+                    <Button :label="$t('new')" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
+                    <Button :label="$t('delete')" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected"
                         :disabled="!selectedStaffs || !selectedStaffs.length" />
                 </template>
                 <template #end>
-                    <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
+                    <Button :label="$t('export')" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
             <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id" :paginator="true"
@@ -420,21 +420,21 @@ function captureImage() {
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
-                        <h4 class="m-0">Ходимлар бошқаруви</h4>
+                        <h4 class="m-0"></h4>
                         <div>
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-4">
                                     <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
-                                        optionValue="id" placeholder="Бўлими" fluid showClear />
+                                        optionValue="id" :placeholder="$t('direction')" fluid showClear />
                                 </div>
                                 <div class="col-span-4">
                                     <Select v-model="filter.staff_id" :options="our_staffs" optionLabel="fullname"
-                                        optionValue="id" placeholder="Кимга" fluid showClear />
+                                        optionValue="id" :placeholder="$t('to_whom')" fluid showClear />
                                 </div>
                                 <div class="col-span-4">
                                     <IconField>
                                         <InputIcon><i class="pi pi-search" /></InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
+                                        <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                                     </IconField>
                                 </div>
                             </div>
@@ -442,19 +442,19 @@ function captureImage() {
                     </div>
                 </template>
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="division_name" header="Бўлими" sortable></Column>
-                <Column field="staff_name" header="Кимга" sortable></Column>
-                <Column header="Расм">
+                <Column field="division_name" :header="$t('direction')" sortable></Column>
+                <Column field="staff_name" :header="$t('to_whom')" sortable></Column>
+                <Column :header="$t('photo')">
                     <template #body="slotProps">
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.Ш" sortable></Column>
-                <Column field="phone_number" header="Телефон" sortable></Column>
-                <Column field="passport_number" header="Пасспoрт" sortable></Column>
-                <Column field="birth_date" header="Туғулган куни" sortable></Column>
-                <Column field="about" header="Сабаби" sortable></Column>
-                <Column header="Aмаллар" style="min-width: 12rem">
+                <Column field="fullname" :header="$t('full_name')" sortable></Column>
+                <Column field="phone_number" :header="$t('phone')" sortable></Column>
+                <Column field="passport_number" :header="$t('passport')" sortable></Column>
+                <Column field="birth_date" :header="$t('birthday')" sortable></Column>
+                <Column field="about" :header="$t('reason')" sortable></Column>
+                <Column :header="$t('actions')" style="min-width: 12rem">
                     <template #body="slotProps">
                         <div v-if="userData.role_id == 5">
                             <Button v-show="!slotProps.data.dejurka_name" icon="pi pi-lock-open" outlined rounded severity="warn" class="mr-2"
@@ -471,57 +471,57 @@ function captureImage() {
             </DataTable>
         </div>
 
-        <Dialog v-model:visible="staffDialog" :header="staff.id ? 'Таҳрирлаш' : 'Қўшиш'" :style="{ width: '750px' }"
+        <Dialog v-model:visible="staffDialog" :header="staff.id ? $t('edit') : $t('add')" :style="{ width: '750px' }"
             :modal="true" @hide="stopCamera">
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
-                    <label for="division_id" class="block font-bold mb-3">Бўлим</label>
+                    <label for="division_id" class="block font-bold mb-3">{{$t('direction')}}</label>
                     <Select v-model="division_id" :options="divisions" optionLabel="name" optionValue="id"
-                        placeholder="Танланг" required fluid />
+                        :placeholder="$t('select')" required fluid />
                 </div>
                 <div class="col-span-6">
-                    <label for="staff_id" class="block font-bold mb-3">Кимга</label>
+                    <label for="staff_id" class="block font-bold mb-3">{{$t('to_whom')}}</label>
                     <Select v-model="staff.staff_id" :options="our_staffs" optionLabel="fullname" optionValue="id"
-                        placeholder="Танланг" required fluid />
-                    <small v-if="submitted && !staff.staff_id" class="text-red-500">Майдон мажбурий</small>
+                        :placeholder="$t('select')" required fluid />
+                    <small v-if="submitted && !staff.staff_id" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="fullname" class="block font-bold mb-3">Ф.И.Ш</label>
+                    <label for="fullname" class="block font-bold mb-3"> {{$t('full_name')}}</label>
                     <InputText id="fullname" v-model="staff.fullname" required autofocus
-                        :invalid="submitted && !staff.fullname" fluid placeholder="Киритинг" />
-                    <small v-if="submitted && !staff.fullname" class="text-red-500">Майдон мажбурий</small>
+                        :invalid="submitted && !staff.fullname" fluid :placeholder="$t('enter')" />
+                    <small v-if="submitted && !staff.fullname" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="phone" class="block font-bold mb-3">Телефон</label>
+                    <label for="phone" class="block font-bold mb-3">{{$t('phone')}}</label>
                     <InputText id="phone" v-model="staff.phone_number" @input="handlePhoneMask"
                         placeholder="+998 (xxx) xxx-xx-xx" fluid />
                     <small v-if="submitted && staff.phone_number && staff.phone_number.replace(/\s/g, '').length !== 13"
-                        class="text-red-500">Формат +998 99 999 99 99.</small>
+                        class="text-red-500">Format +998 99 999 99 99.</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="birth_date" class="block font-bold mb-3">Туғулган куни</label>
+                    <label for="birth_date" class="block font-bold mb-3">  {{$t('birthday')}}</label>
                     <div class="relative">
                         <input v-if="isManualInput" type="date" v-model="manualInput" placeholder="yyyy-mm-dd"
                             class="p-inputtext p-component w-[90%]" @blur="handleManualInput"
                             @keydown.enter="handleManualInput" :invalid="submitted && !staff.birth_date"/>
                         <DatePicker v-else :showIcon="true" :showButtonBar="true" v-model="staff.birth_date"
-                            @change="syncManualInput" fluid class="w-[90%]" placeholder="Танланг" :invalid="submitted && !staff.birth_date"/>
+                            @change="syncManualInput" fluid class="w-[90%]" :placeholder="$t('select')" :invalid="submitted && !staff.birth_date"/>
                         <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 p-link"
                             @click="toggleInputMode">
                             <i :class="isManualInput ? 'pi pi-calendar' : 'pi pi-pencil'"></i>
                         </button>
                     </div>
-                    <small v-if="submitted && !staff.birth_date" class="text-red-500">Майдон мажбурий</small>
+                    <small v-if="submitted && !staff.birth_date" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
                 <div class="col-span-6">
-                    <label for="passport_number" class="block font-bold mb-3">Пасспoрт</label>
-                    <InputText v-model="staff.passport_number" id="passport_number" fluid placeholder="Киритинг" :invalid="submitted && !staff.passport_number"/>
-                    <small v-if="submitted && !staff.passport_number" class="text-red-500">Майдон мажбурий</small>
+                    <label for="passport_number" class="block font-bold mb-3"> {{$t('passport')}}</label>
+                    <InputText v-model="staff.passport_number" id="passport_number" fluid :placeholder="$t('enter')" :invalid="submitted && !staff.passport_number"/>
+                    <small v-if="submitted && !staff.passport_number" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
                 <div class="col-span-12">
-                    <label for="about" class="block font-bold mb-3">Сабаби</label>
-                    <Textarea v-model="staff.about" id="about" fluid placeholder="Киритинг" :invalid="submitted && !staff.about"/>
-                    <small v-if="submitted && !staff.about" class="text-red-500">Майдон мажбурий</small>
+                    <label for="about" class="block font-bold mb-3"> {{$t('reason')}}</label>
+                    <Textarea v-model="staff.about" id="about" fluid :placeholder="$t('enter')" :invalid="submitted && !staff.about"/>
+                    <small v-if="submitted && !staff.about" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
                 <div  :style="!stream && !capturedImage ? 'display: none' : 'display: block'" class="col-span-12">
                     <div class="flex justify-center">
@@ -533,21 +533,21 @@ function captureImage() {
                     <div class="flex items-center justify-between gap-4" v-if="!capturedImage">
                         <Button label="Расимга oлиш" icon="pi pi-camera" class="mt-3" :disabled="!isFaceDetected || !isFaceCentered" @click="captureImage" />
                         <div class="mt-3">
-                            <span v-if="!isFaceDetected" class="text-red-500">Юз аниқланмади</span>
-                            <span v-else-if="!isFaceCentered" class="text-yellow-500">Илтимoс юзингизни камерага кўрсатинг</span>
-                            <span v-else class="text-green-500">Юз аниқланди, расмга oлса бўлади</span>
+                            <span v-if="!isFaceDetected" class="text-red-500"> {{$t('face_not_detected')}}</span>
+                            <span v-else-if="!isFaceCentered" class="text-yellow-500"> {{$t('please_show_face')}}</span>
+                            <span v-else class="text-green-500"> {{$t('face_detected')}}</span>
                         </div>
                         <div class="mt-3">
-                            (Илтимoс! Тезрoқ расмга oлинг!)
+                            ({{$t('please_take_photo_quickly')}}!)
                         </div>
                     </div>
-                    <Button v-else label="Qaytadan rasmga olish" icon="pi pi-replay" class="mt-3" @click="startCamera" />
+                    <Button v-else :label="$t('reset')" icon="pi pi-replay" class="mt-3" @click="startCamera" />
                 </div>
                 <div v-if="!stream && !capturedImage" class="col-span-12">
-                    <Button label="Камерани ёқиш" icon="pi pi-play" class="mt-3" style="width: 200px" @click="startCamera" />
+                    <Button :label="$t('turn_on_camera')" icon="pi pi-play" class="mt-3" style="width: 200px" @click="startCamera" />
                 </div>
                 <div class="col-span-12">
-                    <label for="photo" class="block font-bold mb-3">Расм</label>
+                    <label for="photo" class="block font-bold mb-3">{{$t('photo')}}</label>
                     <FileUpload name="demo[]" ref="image" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*">
                         <template #header="{ chooseCallback, clearCallback, files }">
                             <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
@@ -563,44 +563,44 @@ function captureImage() {
                             </div>
                         </template>
                     </FileUpload>
-                    <small v-if="submitted && (!image?.files?.length && !staff.photo && !capturedImage)" class="text-red-500">Майдон мажбурий</small>
+                    <small v-if="submitted && (!image?.files?.length && !staff.photo && !capturedImage)" class="text-red-500">{{ $t('field_required') }}</small>
                 </div>
             </div>
             <template #footer>
-                <Button label="Бекор қилиш" severity="danger" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Сақлаш" icon="pi pi-check" @click="saveStaff" />
+                <Button :label="$t('cancel')" severity="danger" icon="pi pi-times" text @click="hideDialog" />
+                <Button :label="$t('save')" icon="pi pi-check" @click="saveStaff" />
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="permittingPerson" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+        <Dialog v-model:visible="permittingPerson" :style="{ width: '450px' }" :header="$t('confirmation')" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Сиз бу шаxсга рoстдан ҳам руxсат бермoқчимисиз: {{ staff.fullname }}?</span>
+                <span>{{$t('confirm_permission')}}: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
-                <Button label="Йўқ" icon="pi pi-times" text @click="permittingPerson = false" />
-                <Button label="Ҳа" icon="pi pi-check" @click="givePermission" />
+                <Button :label="$t('no')" icon="pi pi-times" text @click="permittingPerson = false" />
+                <Button :label="$t('yes')" icon="pi pi-check" @click="givePermission" />
             </template>
         </Dialog>
-        <Dialog v-model:visible="deleteStaffDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+        <Dialog v-model:visible="deleteStaffDialog" :style="{ width: '450px' }" :header="$t('confirmation')" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми: {{ staff.fullname }}?</span>
+                <span>{{ $t('confirm_delete') }}: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
-                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffDialog = false" />
-                <Button label="Ҳа" icon="pi pi-check" @click="deleteStaff" />
+                <Button :label="$t('no')" icon="pi pi-times" text @click="deleteStaffDialog = false" />
+                <Button :label="$t('yes')" icon="pi pi-check" @click="deleteStaff" />
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+        <Dialog v-model:visible="deleteStaffsDialog" :style="{ width: '450px' }" :header="$t('confirmation')" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Бу маълумотни ўчириб ташлашни ростдан ҳам хоҳлайсизми?</span>
+                <span>{{ $t('confirm_delete') }}?</span>
             </div>
             <template #footer>
-                <Button label="Йўқ" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
-                <Button label="Ҳа" icon="pi pi-check" @click="deleteSelectedStaffs" />
+                <Button :label="$t('no')" icon="pi pi-times" text @click="deleteStaffsDialog = false" />
+                <Button :label="$t('yes')" icon="pi pi-check" @click="deleteSelectedStaffs" />
             </template>
         </Dialog>
     </div>

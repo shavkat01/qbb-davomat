@@ -51,14 +51,14 @@ onMounted(async () => {
     <div class="grid grid-cols-12 gap-4">
         <div v-if="staffs" class="col-span-6 card p-4 mb-0">
             <h3 class="text-2xl mb-3">
-                Давомат
+                {{ $t('calendar') }}
             </h3>
             <div class="grid grid-cols-12 gap-3">
                 <div class="col-span-12">
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
-                                <span class="block text-muted-color font-medium mb-2"> Рўйхат бўйича </span>
+                                <span class="block text-muted-color font-medium mb-2"> {{ $t('by_list') }} </span>
                                 <div class="text-surface-900 dark:text-surface-0 font-medium text-xl"></div>
                             </div>
                             <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
@@ -73,7 +73,7 @@ onMounted(async () => {
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
-                                <span class="block text-muted-color font-medium mb-2"> Вақтида келди </span>
+                                <span class="block text-muted-color font-medium mb-2"> {{ $t('on_time') }} </span>
                                 <div class="text-surface-900 dark:text-surface-0 font-medium text-xl"></div>
                             </div>
                             <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
@@ -88,7 +88,7 @@ onMounted(async () => {
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
-                                <span class="block text-muted-color font-medium mb-2"> Кеч қолди </span>
+                                <span class="block text-muted-color font-medium mb-2"> {{ $t('late') }}</span>
                                 <div class="text-surface-900 dark:text-surface-0 font-medium text-xl"></div>
                             </div>
                             <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
@@ -103,7 +103,7 @@ onMounted(async () => {
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-lg px-8 py-5 cursor-pointer mb-0">
                         <div class="flex justify-between">
                             <div>
-                                <span class="block text-muted-color font-medium mb-2"> Келмади </span>
+                                <span class="block text-muted-color font-medium mb-2"> {{ $t('absent') }}</span>
                                 <div class="text-surface-900 dark:text-surface-0 font-medium text-xl"></div>
                             </div>
                             <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
@@ -120,9 +120,9 @@ onMounted(async () => {
         <div class="col-span-6 card p-4">
             <div class="flex justify-between items-center">
                 <h3 class="text-2xl">
-                    Рўйхатда
+                    {{ $t('by_list') }}
                 </h3>
-                <Button class="" label="Экспорт" severity="success" text icon="pi pi-file-excel"
+                <Button class="" ::label="$t('export')" severity="success" text icon="pi pi-file-excel"
                 @click="emits('export-to-excel')" />
             </div>
             <div class="grid grid-cols-12 gap-4">

@@ -34,11 +34,11 @@ const statusList = ref([]);
 const staffs = ref([]);
 const selectedProducts = ref();
 const typeList = ref([
-    { id: 1, name: 'Вақтида келганлар' },
-    { id: 2, name: 'Кеч қолганлар' },
-    { id: 3, name: 'Келмади' },
-    { id: 4, name: 'Бинода' },
-    { id: 5, name: 'Бинода эмас' },
+    { id: 1, name: 'on_time' },
+    { id: 2, name: 'late' },
+    { id: 3, name: 'absent' },
+    { id: 4, name: 'in_building' },
+    { id: 5, name: 'not_in_building' },
 ]);
 
 
@@ -219,7 +219,7 @@ function editStaff(params) {
 
 async function saveChangeStatus(params) {
    if (visibleRight.value.face_id) {
-        if (!changeStatus.value) toast.add({ severity: 'error', summary: 'Holat o\'zgartirilmadi', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
+        if (!changeStatus.value) toast.add({ severity: 'error', summary: 'Ҳoлат ўзгартирилмади', detail: 'Сиз ҳолатни танламадингиз!', life: 3000 });
         await axios.put(`/events/update-face-event/`, { face_id: visibleRight.value.face_id, type: changeStatus.value });
         getStaffs()
         toast.add({ severity: 'success', summary: 'Муваффақиятли', detail: 'Муваффақиятли', life: 3000 });
@@ -303,47 +303,47 @@ const exportToExcel = () => {
                                     <InputIcon>
                                         <i class="pi pi-search" />
                                     </InputIcon>
-                                    <InputText v-model="filters['global'].value" placeholder="Қидириш..." />
+                                    <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                                 </IconField>
                             </div>
                             <div class="col-span-2">
                                 <Select v-model="filter.division_id" :options="divisions" optionLabel="name"
-                                    optionValue="id" placeholder="Йўналиши" fluid showClear />
+                                    optionValue="id" :placeholder="$t('direction')" fluid showClear />
                             </div>
                             <div class="col-span-2">
-                                <Select v-model="filter.type" :options="typeList" optionLabel="name" optionValue="id"
-                                    placeholder="Ҳолати" fluid showClear />
+                                <Select v-model="filter.type" :options="typeList" :optionLabel="e=> $t(e.name)" optionValue="id"
+                                    :placeholder="$t('status')" fluid showClear />
                             </div>
                             <div class="col-span-2">
                                 <DatePicker :showIcon="true" :showButtonBar="true" v-model="filter.from_date" fluid
-                                    placeholder="Сана">
+                                    :placeholder="$t('date')">
                                 </DatePicker>
                             </div>
                             <div class="col-span-4">
-                                <Button label="Aслига қайтариш" icon="pi pi-filter-slash"
+                                <Button :label="$t('restore')" icon="pi pi-filter-slash"
                                     :disabled="filters['global'].value || filter.division_id || filter.type || filter?.from_date ? false : true"
                                     @click="clearFilter" />
-                                <Button class="ml-4" label="Экспорт" severity="success" icon="pi pi-file-excel"
+                                <Button class="ml-4" ::label="$t('export')" severity="success" icon="pi pi-file-excel"
                                     @click="exportToExcel" />
                             </div>
                         </div>
                     </div>
                 </template>
 
-                <Column header="Расм">
+                <Column :header="$t('photo')">
                     <template #body="slotProps">
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="25" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.Ш" sortable>
+                <Column field="fullname" :header="$t('full_name')" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.fullname }}
                     </template>
                 </Column>
-                <Column field="phone_number" header="Телефон" sortable></Column>
-                <Column field="rank_name" header="Унвон" sortable></Column>
-                <Column field="state" header="Ҳозирда" sortable></Column>
-                <Column field="first_time" header="Ишга келган вақти" sortable>
+                <Column field="phone_number" :header="$t('phone')" sortable></Column>
+                <Column field="rank_name" :header="$t('rank')" sortable></Column>
+                <Column field="state" :header="$t('currently')" sortable></Column>
+                <Column field="first_time" :header="$t('arrival_time')" sortable>
                     <template #body="slotProps">
                         <div v-if="slotProps.data.first_time" class="flex items-center">
                             <div
@@ -359,9 +359,9 @@ const exportToExcel = () => {
                         </div>
                     </template>
                 </Column>
-                <Column field="is_here" header="Сўнги амал вақти" sortable>
+                <Column field="is_here" :header="$t('last_action_time')" sortable>
                     <template #body="slotProps">
-                        <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                        <div v-tooltip.top="{ value: $t('entry_time'), showDelay: 200, hideDelay: 300 }"
                             v-if="slotProps.data.is_here == true" class="flex items-center">
                             <div
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -371,7 +371,7 @@ const exportToExcel = () => {
                                 </div>
                             </div>
                         </div>
-                        <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                        <div v-tooltip.top="{ value: $t('exit_time'), showDelay: 200, hideDelay: 300 }"
                             v-else-if="slotProps.data.is_here == false" class="flex items-center">
                             <div
                                 class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -379,17 +379,17 @@ const exportToExcel = () => {
                                 {{ slotProps.data?.last_time }}
                             </div>
                         </div>
-                        <div v-tooltip.top="{ value: `Ишхонага келмаган`, showDelay: 200, hideDelay: 300 }"
+                        <div v-tooltip.top="{ value: $t('did_not_come'), showDelay: 200, hideDelay: 300 }"
                             v-else-if="slotProps.data.is_here == null"
                             class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-900 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                             <i class="pi pi-home"></i>
                         </div>
                     </template>
                 </Column>
-                <Column field="type" header="Қуролланган" sortable>
+                <Column field="type" :header="$t('armed')" sortable>
                     <template #body="slotProps">
                         <div class="flex items-center justify-center w-28 mx-10">
-                            <div v-tooltip.top="{ value: `Қуролланган`, showDelay: 200, hideDelay: 300 }"
+                            <div v-tooltip.top="{ value: $t('armed'), showDelay: 200, hideDelay: 300 }"
                                 v-if="slotProps.data.weapon_status == false"
                                 class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
                                 :class="{ 'h-16': slotProps.data.weapon_time }">
@@ -406,7 +406,7 @@ const exportToExcel = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div v-tooltip.top="{ value: `Қуролланмаган`, showDelay: 200, hideDelay: 300 }" v-else
+                            <div v-tooltip.top="{ value: $t('unarmed'), showDelay: 200, hideDelay: 300 }" v-else
                                 class="px-4 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer"
                                 :class="{ 'h-16': slotProps.data.weapon_time }">
                                 <i class="pi pi-times"
@@ -424,7 +424,7 @@ const exportToExcel = () => {
                         </div>
                     </template>
                 </Column>
-                <Column header="Aмаллар">
+                <Column ::header="$t('actions')">
                     <template #body="slotProps">
                         <Button icon="pi pi-pencil" v-if="userData.role_id == 1" rounded severity="warn"
                             class="mx-2" @click="editStaff(slotProps.data)" />
@@ -441,7 +441,7 @@ const exportToExcel = () => {
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Рўйхат бўйича:
+                                            {{ $t('by_list') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -456,7 +456,7 @@ const exportToExcel = () => {
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Вақтида келганлар:
+                                            {{ $t('on_time') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -465,7 +465,7 @@ const exportToExcel = () => {
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Кеч қолганлар:
+                                            {{ $t('late') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -474,7 +474,7 @@ const exportToExcel = () => {
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Келмади:
+                                             {{ $t('absent') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -489,7 +489,7 @@ const exportToExcel = () => {
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Бинода:
+                                             {{ $t('in_building') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -498,7 +498,7 @@ const exportToExcel = () => {
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Бинода эмас:
+                                              {{ $t('not_in_building') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -513,7 +513,7 @@ const exportToExcel = () => {
                                 <div class="inline-flex items-center gap-3 p-4 border border-surface rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <h3>
-                                            Қуролланган:
+                                             {{ $t('armed') }}:
                                         </h3>
                                         <div
                                             class="w-12 h-9 flex items-center justify-center bg-gray-500 dark:bg-gray-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
@@ -528,14 +528,14 @@ const exportToExcel = () => {
                 </ColumnGroup>
             </DataTable>
         </div>
-        <Drawer v-model:visible="visibleRight" header="Ҳолат ўзгартириш" position="right">
+        <Drawer v-model:visible="visibleRight" :header="$t('change_status')" position="right">
 
             <Select v-model="changeStatus" v-if="userData.role_id == 1"
                 :options="[{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 3, name: 'Келмади' }, { id: 4, name: 'Бинода' }, { id: 5, name: 'Бинода эмас' }]"
-                optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
+                optionLabel="name" optionValue="id" :placeholder="$t('select')" required fluid />
             <Select v-model="changeStatus" v-else
                 :options="visibleRight.first_time || visibleRight.type == 1 || visibleRight.type == 2 ? [{ id: 4, name: 'Бинода' }, { id: 5, name: 'Бинода эмас' }] : [{ id: 1, name: 'Вақтида келди' }, { id: 2, name: 'Кеч қолди' }, { id: 5, name: 'Бинода эмас' }]"
-                optionLabel="name" optionValue="id" placeholder="Танланг" required fluid />
+                optionLabel="name" optionValue="id" :placeholder="$t('select')" required fluid />
             
             <div class="flex justify-around mt-10">
                 <Button severity="danger" icon="pi pi-times" @click="visibleRight = false" />

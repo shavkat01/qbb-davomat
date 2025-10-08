@@ -412,8 +412,8 @@ window.onresize = function () {
             <div class="card py-2 mb-3">
                 <Tabs value="0" class="w-full">
                     <TabList>
-                        <Tab @click="filter.type = 1" value="0">Кирди-чиқди</Tab>
-                        <Tab @click="filter.type = 2" value="1">Қурол</Tab>
+                        <Tab @click="filter.type = 1" value="0"> {{$t('entry_exit')}}</Tab>
+                        <Tab @click="filter.type = 2" value="1"> {{$t('weapon')}}</Tab>
                     </TabList>
                     <TabPanels class="!p-0">
                         <TabPanel value="0" class="flex gap-3 w-full pt-3 overflow-hidden">
@@ -428,7 +428,7 @@ window.onresize = function () {
                                         <div class="mt-0 font-semibold text-xl">
                                             <div
                                                 class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                                Кириш
+                                                {{$t('entry')}}
                                             </div>
                                         </div>
                                     </div>
@@ -469,7 +469,7 @@ window.onresize = function () {
                                         <div class="mt-0 font-semibold text-xl">
                                             <div
                                                 class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                                Чиқиш
+                                                {{$t('exit')}}
                                             </div>
                                         </div>
                                     </div>
@@ -507,7 +507,7 @@ window.onresize = function () {
                                     <div class="mt-0 font-semibold text-xl">
                                         <div
                                             class="px-4 h-9 inline-flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            Қабул қилди
+                                           {{$t('accepted')}}
                                         </div>
                                     </div>
                                 </div>
@@ -541,7 +541,7 @@ window.onresize = function () {
                                     <div class="mt-0 font-semibold text-xl">
                                         <div
                                             class="px-4 h-9 inline-flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg shrink-0 cursor-pointer">
-                                            Топширди
+                                             {{$t('handed_over')}}
                                         </div>
                                     </div>
                                 </div>
@@ -622,54 +622,54 @@ window.onresize = function () {
                                     <InputIcon>
                                         <i class="pi pi-search" />
                                     </InputIcon>
-                                    <InputText v-model="filters['global'].value" placeholder="Қидириш..." />
+                                    <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                                 </IconField>
                             </div>
                         </div>
                     </div>
                 </template>
-                <Column field="is_here" header="Амал" sortable>
+                <Column field="is_here" ::header="$t('actions')" sortable>
                     <template #body="slotProps">
                         <div v-if="filter.type == 1">
-                            <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                            <div v-tooltip.top="{ value: $t('entry_time'), showDelay: 200, hideDelay: 300 }"
                                 v-if="slotProps.data.is_here" class="flex items-center">
                                 <div
                                     class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     <i class="pi pi-sign-in mr-4"></i>
-                                    Кирди
+                                      {{$t('entry')}}
                                 </div>
                             </div>
-                            <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                            <div v-tooltip.top="{ value: $t('exit_time'), showDelay: 200, hideDelay: 300 }"
                                 v-else-if="slotProps.data.is_here == false" class="flex items-center">
                                 <div
                                     class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     <i class="pi pi-sign-out mr-4 rotate-180"></i>
-                                    Чиқди
+                                      {{$t('exit')}}
                                 </div>
                             </div>
                         </div>
                         <div v-if="filter.type == 2">
-                            <div v-tooltip.top="{ value: `Ишхонага кирган вақти`, showDelay: 200, hideDelay: 300 }"
+                            <div v-tooltip.top="{ value: $t('entry_time'), showDelay: 200, hideDelay: 300 }"
                                 v-if="slotProps.data.weapon_status == false" class="flex items-center">
                                 <div
                                     class="px-4 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     <i class="pi pi-check mr-4"></i>
-                                    Қабул қилди
+                                      {{$t('accepted')}}
                                 </div>
                             </div>
-                            <div v-tooltip.top="{ value: `Ишхонадан чиқган вақти`, showDelay: 200, hideDelay: 300 }"
+                            <div v-tooltip.top="{ value: $t('exit_time'), showDelay: 200, hideDelay: 300 }"
                                 v-else-if="slotProps.data.weapon_status == true" class="flex items-center">
                                 <div
                                     class="h-9 px-4 flex items-center justify-center bg-orange-500 dark:bg-orange-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
                                     <i class="pi pi-times mr-4 rotate-180"></i>
-                                    Топширди
+                                      {{$t('handed_over')}}
                                 </div>
                             </div>
                         </div>
 
                     </template>
                 </Column>
-                <Column header="Вақти" sortable>
+                <Column :header="$t('time')" sortable>
                     <template #body="slotProps">
                         <div v-if="filter.type == 1 && slotProps.data.last_time" class="flex items-center">
                             <div
@@ -687,8 +687,8 @@ window.onresize = function () {
                         </div>
                     </template>
                 </Column>
-                <Column field="division_name" header="Йўналиш" sortable></Column>
-                <Column field="fullname" header="Ф.И.Ш" sortable>
+                <Column field="division_name" :header="$t('direction')" sortable></Column>
+                <Column field="fullname" :header="$t('full_name')" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.fullname }}
                     </template>

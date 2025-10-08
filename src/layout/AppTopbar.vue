@@ -1,16 +1,47 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import { useI18n } from 'vue-i18n'
 
+import uz_flag from '@/assets/demo/flags/uz_flag.jfif'
+import ru_flag from '@/assets/demo/flags/ru_flag.jfif'
+import oz_flag from '@/assets/demo/flags/uk_flag.png'
 import AppConfigurator from './AppConfigurator.vue';
 import SnowFalling from '@/components/SnowFalling.vue';
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
-
+const { t, locale } = useI18n()
 const router = useRouter();
 
 const clock = ref(null);
+const menu = ref(null);
 
+const langMenuItems = ref([
+    {
+        name: "O'zbekcha",
+        value: 'uz',
+        img: uz_flag,
+    },
+    {
+        name: 'Русский',
+        value: 'ru',
+        img: ru_flag,
+    },
+    {
+        name: 'Ўзбекча',
+        value: 'oz',
+        img: oz_flag,
+    }
+]);
+
+const toggleMenuLang = (event) => {
+    menu.value.toggle(event);
+};
+
+function changeLang(lang) {
+    locale.value = lang.value;
+    localStorage.setItem('lang', JSON.stringify(lang))
+}
 function updateClock() {
 				const now = new Date();
 
@@ -63,6 +94,17 @@ function updateClock() {
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
                 <!-- <screen-recorder/> -->
+                <button @click="toggleMenuLang" class="p-link layout-topbar-button">
+                    <i class="pi pi-language"></i>
+                </button>
+                <Menu ref="menu" :model="langMenuItems" :popup="true" >
+                    <template #item="{ item, props }">
+                        <a v-ripple class="flex align-items-center" v-bind="props.action" @click="changeLang(item)">
+                            <img width="24" :src="item.img" alt="">
+                            <span class="ml-3">{{ item.name }}</span>
+                        </a>
+                    </template>
+                </Menu>
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>

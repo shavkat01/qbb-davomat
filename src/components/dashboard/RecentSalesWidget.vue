@@ -51,18 +51,18 @@ function getImage(img) {
 
             <template #empty>
                 <div class="text-center">
-                    Маълумот топилмади
+                    {{ $t('no_data') }}
                 </div>
             </template>
-            <Column header="Расм">
+            <Column :header="$t('photo')">
                 <template #body="slotProps">
                     <Image :src="getImage(slotProps.data.photo)" alt="Image" width="25" preview />
                 </template>
             </Column>
-            <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 4rem"></Column>
-            <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
-            <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
-            <Column field="division_name" header="Bo'lim" sortable style="min-width: 4rem"></Column>
+            <Column field="fullname" :header="$t('full_name')" sortable style="min-width: 4rem"></Column>
+            <Column field="phone_number" :header="$t('phone')" sortable style="min-width: 4rem"></Column>
+            <Column field="rank_name" :header="$t('rank')" sortable style="min-width: 4rem"></Column>
+            <Column field="division_name" :header="$t('direction')" sortable style="min-width: 4rem"></Column>
         </DataTable>
     </div>
 </template>

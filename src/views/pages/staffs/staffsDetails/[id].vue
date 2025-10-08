@@ -51,7 +51,7 @@ function getImage(img) {
         <div class="card">
             <Toolbar class="mb-6">
                 <template #end>
-                    <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
+                    <Button :label="$t('export')" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
             <DataTable ref="dt" v-model:selection="selectedProducts" :value="staffs" dataKey="id"
@@ -66,13 +66,13 @@ function getImage(img) {
                             <InputIcon>
                                 <i class="pi pi-search" />
                             </InputIcon>
-                            <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
+                            <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                         </IconField>
                     </div>
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 12rem"></Column>
+                <Column field="fullname" :header="$t('full_name')" sortable style="min-width: 12rem"></Column>
                 <Column field="status" header="Holat" sortable style="min-width: 12rem"></Column>
                 <Column field="from_date" header="Dan" sortable style="min-width: 12rem"></Column>
                 <Column field="to_date" header="Gacha" sortable style="min-width: 12rem"></Column>

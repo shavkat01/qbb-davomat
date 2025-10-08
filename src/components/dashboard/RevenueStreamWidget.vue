@@ -4,6 +4,8 @@ import { onMounted, ref, watch, inject, computed, onUnmounted } from 'vue';
 import axios from '@/service/axiosIns.js';
 import { useBasicStore } from '@/store/basic';
 import { useSocket} from "@/service/useSocket.js";
+import { useI18n } from 'vue-i18n'
+const { t, locale } = useI18n()
 
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 const store = useBasicStore();
@@ -37,7 +39,7 @@ function setChartData() {
         datasets: [
             {
                 type: 'bar',
-                label: 'Келмади',
+                label: t('absent'),
                 backgroundColor: divisions.value.map(() => getBackgroundColor(3)),
                 data: divisions.value.map((element) => {
                     return staffs.value.staffs.filter(
@@ -48,7 +50,7 @@ function setChartData() {
             },
             {
                 type: 'bar',
-                label: 'Кеч қолди',
+                label: t('late'),
                 backgroundColor: divisions.value.map(() => getBackgroundColor(2)),
                 data: divisions.value.map((element) => {
                     return staffs.value.staffs.filter(
@@ -59,7 +61,7 @@ function setChartData() {
             },
             {
                 type: 'bar',
-                label: 'Вақтида келди',
+                label: t('on_time'),
                 backgroundColor: divisions.value.map(() => getBackgroundColor(1)),
                 data: divisions.value.map((element) => {
                     return staffs.value.staffs.filter(
@@ -159,7 +161,7 @@ onMounted(async () => {
 
 <template>
     <div class="card">
-        <div class="font-semibold text-xl mb-4">Бугунги кунлилк давомат</div>
+        <div class="font-semibold text-xl mb-4">{{ $t('today_attendance') }}</div>
         <Chart type="bar" :data="chartData" :options="chartOptions" class="h-64"/>
     </div>
 </template>

@@ -106,13 +106,13 @@ function getImage(img) {
         <div class="card">
             <Toolbar class="mb-6">
                 <template #start>
-                    <Button label="Танланганарни қабул қилдим" icon="pi pi-check" severity="secondary" @click="receptSelected"
+                    <Button :label="$t('selected_accepted')" icon="pi pi-check" severity="secondary" @click="receptSelected"
                         :disabled="!selectedStaffs || !selectedStaffs.length" />
                 </template>
                 <template #end>
                     <IconField>
                         <InputIcon><i class="pi pi-search" /></InputIcon>
-                        <InputText v-model="filters['global'].value" placeholder="Qidirish..." />
+                        <InputText v-model="filters['global'].value" :placeholder="$t('search')" />
                     </IconField>
                 </template>
             </Toolbar>
@@ -122,19 +122,19 @@ function getImage(img) {
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} staffs">
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="division_name" header="Бўлими" sortable></Column>
-                <Column field="staff_name" header="Кимга" sortable></Column>
-                <Column header="Расм">
+                <Column field="division_name" :header="$t('direction')" sortable></Column>
+                <Column field="staff_name" :header="$t('to_whom')" sortable></Column>
+                <Column :header="$t('photo')">
                     <template #body="slotProps">
                         <Image :src="getImage(slotProps.data.photo)" alt="Image" width="70" preview />
                     </template>
                 </Column>
-                <Column field="fullname" header="Ф.И.Ш" sortable></Column>
-                <Column field="phone_number" header="Телефон" sortable></Column>
-                <Column field="passport_number" header="Пасспoрт" sortable></Column>
-                <Column field="birth_date" header="Туғулган куни" sortable></Column>
-                <Column field="about" header="Сабаби" sortable></Column>
-                <Column header="Aмаллар" style="min-width: 12rem">
+                <Column field="fullname" :header="$t('full_name')" sortable></Column>
+                <Column field="phone_number" :header="$t('phone')" sortable></Column>
+                <Column field="passport_number" :header="$t('passport')" sortable></Column>
+                <Column field="birth_date" :header="$t('birthday')" sortable></Column>
+                <Column field="about" :header="$t('reason')" sortable></Column>
+                <Column :header="$t('actions')" style="min-width: 12rem">
                     <template #body="slotProps">
                         <Button v-if="!slotProps.data.i_received" icon="pi pi-check" outlined rounded severity="success"
                             @click="recepted(slotProps.data)" />
@@ -145,26 +145,26 @@ function getImage(img) {
             </DataTable>
         </div>
 
-        <Dialog v-model:visible="receptDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+        <Dialog v-model:visible="receptDialog" :style="{ width: '450px' }" :header="$t('confirmation')" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span v-if="!receptDialog.i_received">Сиз бу шаxсни рoстдан ҳам қабул қилдингизми: {{ staff.fullname }}?</span>
-                <span v-else>Сиз бу шаxсни ҳали қабул қилмаганмидингиз: {{ staff.fullname }}?</span>
+                <span v-if="!receptDialog.i_received">{{$t('confirm_accept_person')}}: {{ staff.fullname }}?</span>
+                <span v-else> {{$t('not_yet_accepted')}}: {{ staff.fullname }}?</span>
             </div>
             <template #footer>
-                <Button label="Йўқ" icon="pi pi-times" text @click="receptDialog = false" />
-                <Button label="Ҳа" icon="pi pi-check" @click="receptOneStaff" />
+                <Button :label="$t('no')" icon="pi pi-times" text @click="receptDialog = false" />
+                <Button :label="$t('yes')" icon="pi pi-check" @click="receptOneStaff" />
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="receptSelectedDialog" :style="{ width: '450px' }" header="Тасдиқлаш" :modal="true">
+        <Dialog v-model:visible="receptSelectedDialog" :style="{ width: '450px' }" :header="$t('confirmation')" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span>Сиз бу шаxсларни рoстдан ҳам қабул қилдингизми?</span>
+                <span>{{$t('confirm_accept_person')}}?</span>
             </div>
             <template #footer>
-                <Button label="Йўқ" icon="pi pi-times" text @click="receptSelectedDialog = false" />
-                <Button label="Ҳа" icon="pi pi-check" @click="receptStaffs" />
+                <Button :label="$t('no')" icon="pi pi-times" text @click="receptSelectedDialog = false" />
+                <Button :label="$t('yes')" icon="pi pi-check" @click="receptStaffs" />
             </template>
         </Dialog>
     </div>

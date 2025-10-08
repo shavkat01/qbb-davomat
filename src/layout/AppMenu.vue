@@ -7,16 +7,16 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         blockedUsers: [3],
-        label: 'Aсосий',
+        label: 'main',
         items: [
-            { blockedUsers: [4], label: 'Бош саҳифа', icon: 'pi pi-fw pi-home', to: '/' },
-            { blockedUsers: [4], label: 'Давомат', icon: 'pi pi-fw pi-calendar', to: '/attendance' },
-            { blockedUsers: [4], label: 'Онлайн кузатув', icon: 'pi pi-fw pi-video', to: '/survilance' },
-            { blockedUsers: [4], label: 'Йиғин', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
-            { blockedUsers: [4], label: 'Муҳим саналар', icon: 'pi pi-fw pi-calendar-clock', to: '/special-dates' },
+            { blockedUsers: [4], label: 'dashboard', icon: 'pi pi-fw pi-home', to: '/' },
+            { blockedUsers: [4], label: 'calendar', icon: 'pi pi-fw pi-calendar', to: '/attendance' },
+            { blockedUsers: [4], label: 'online_monitoring', icon: 'pi pi-fw pi-video', to: '/survilance' },
+            { blockedUsers: [4], label: 'meeting', icon: 'pi pi-fw pi-stopwatch', to: '/trevoga' },
+            { blockedUsers: [4], label: 'important_dates', icon: 'pi pi-fw pi-calendar-clock', to: '/special-dates' },
             {
                 blockedUsers: [1, 2],
-                label: 'Қабулимдагилар',
+                label: 'my_visitors',
                 icon: 'pi pi-fw pi-users',
                 to: '/pages/reception'
             },
@@ -25,20 +25,20 @@ const model = ref([
     },
     {
         blockedUsers: [4],
-        label: 'Маълумотнома',
+        label: 'reference',
         icon: 'pi pi-fw pi-briefcase',
         to: '/pages',
         items: [
        
             {
                 blockedUsers: [3],
-                label: 'Ходимлар',
+                label: 'staffs',
                 icon: 'pi pi-fw pi-user',
                 to: '/pages/staffs'
             },
             {
                 blockedUsers: [],
-                label: 'Бoшқалар',
+                label: 'others',
                 icon: 'pi pi-fw pi-users',
                 to: '/pages/persons'
             },

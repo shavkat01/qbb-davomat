@@ -177,8 +177,8 @@ function confirm(event) {
                         <span>Are you sure you want to proceed?</span>
                     </div>
                     <template #footer>
-                        <Button label="Йўқ" icon="pi pi-times" @click="closeConfirmation" text severity="secondary" />
-                        <Button label="Ҳа" icon="pi pi-check" @click="closeConfirmation" severity="danger" outlined autofocus />
+                        <Button :label="$t('no')" icon="pi pi-times" @click="closeConfirmation" text severity="secondary" />
+                        <Button :label="$t('yes')" icon="pi pi-check" @click="closeConfirmation" severity="danger" outlined autofocus />
                     </template>
                 </Dialog>
             </div>

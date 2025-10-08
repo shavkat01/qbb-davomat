@@ -14,6 +14,7 @@ import 'vue-select/dist/vue-select.css';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
+import i18n from './service/i18n';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -30,6 +31,7 @@ app.use(PrimeVue, {
 app.use(ToastService);
 app.use(ConfirmationService);
 app.use(pinia);
+app.use(i18n)
 
 app.component('v-select', vSelect)
 

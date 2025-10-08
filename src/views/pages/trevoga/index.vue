@@ -4,7 +4,8 @@ import { useSocket } from "@/service/useSocket.js";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { computed, inject, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-
+import { useI18n } from 'vue-i18n'
+const { t, locale } = useI18n()
 
 
 const confirm = useConfirm();
@@ -219,12 +220,12 @@ function createTrevoga(event) {
             message: 'Сиз ростдан ҳам Йиғин хабарини юбормоқчимисиз',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
-                label: "Yo'q",
+                label: t('no'),
                 severity: 'secondary',
                 outlined: true
             },
             acceptProps: {
-                label: 'Ha'
+                label: t('yes')
             },
             accept: async () => {
                 await axios.post('/events/add-trevoga', { status: false })
@@ -254,12 +255,12 @@ function reset(event) {
             message: 'Сиз ростдан ҳам Йиғин хабарини қайта созламоқчимисиз?',
             icon: 'pi pi-exclamation-triangle',
             rejectProps: {
-                label: "Yo'q",
+                label: t('no'),
                 severity: 'secondary',
                 outlined: true
             },
             acceptProps: {
-                label: 'Ha'
+                label: t('yes')
             },
             accept: async () => {
                 await axios.post('/events/add-trevoga', { status: true, trevoga_id: currentTrevoga.value.id })
@@ -299,10 +300,10 @@ function getImage(img) {
             <div class="card">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <Button @click="createTrevoga($event)" :disabled="trevogaStatus !== 'not_given'" severity="danger"
-                        label="Submit">Йиғин бериш</Button>
+                        label="Submit">{{$t('issue_meeting')}}</Button>
                     <div v-if="trevogaStatus !== 'not_given'" class="flex items-center gap-10">
                         <h3 class="">
-                            <span class="text-xl">Йиғин берилган вақт:</span>
+                            <span class="text-xl"> {{$t('meeting_issue_time')}}:</span>
                             <span class="text-xl text-gray-400 ml-3">{{ currentTrevoga?.begin_time?.split(' ')[1]}}</span>
                         </h3>
                         <div>
@@ -322,7 +323,7 @@ function getImage(img) {
                         </div>
                     </div>
                     <Button v-if="trevogaStatus !== 'not_given'" @click="reset($event)" severity="yellow"
-                        label="Disabled">Қайта созлаш</Button>
+                        >{{$t('reset')}}</Button>
                     <!-- :disabled="trevogaStatus !== 'moreThanOneHour'" -->
                 </div>
             </div>
@@ -394,26 +395,26 @@ function getImage(img) {
                                 <RadioButton v-model="filter.attendance" inputId="ingredient1" name="pizza" value="0" />
                                 <label for="ingredient1"
                                     class="py-1 px-4 flex items-center justify-center bg-blue-500 dark:bg-blue-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Жами </label>
+                                    {{$t('all')}}</label>
                             </div>
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient2" name="pizza" value="1" />
                                 <label for="ingredient2"
                                     class="py-1 px-4 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Вақтида келганлар </label>
+                                     {{$t('on_time')}}</label>
 
                             </div>
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient3" name="pizza" value="2" />
                                 <label for="ingredient3"
                                     class="py-1 px-4 flex items-center justify-center bg-yellow-500 dark:bg-yellow-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Кеч қолганлар </label>
+                                     {{$t('late')}}</label>
                             </div>
                             <div class="flex items-center gap-2">
                                 <RadioButton v-model="filter.attendance" inputId="ingredient4" name="pizza" value="3" />
                                 <label for="ingredient4"
                                     class="py-1 px-4 flex items-center justify-center bg-red-500 dark:bg-red-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
-                                    Келмаган </label>
+                                    {{$t('absent')}}</label>
                             </div>
                         </div>
                     </div>
@@ -426,18 +427,18 @@ function getImage(img) {
 
                     <template #empty>
                         <div class="text-center">
-                            Маълумот топилмади
+                         {{$t('no_data')}}
                         </div>
                     </template>
-                    <Column header="Расм">
+                    <Column :header="$t('photo')">
                         <template #body="slotProps">
                             <Image :src="getImage(slotProps.data.photo)" alt="Image" style="height: 30px;" preview />
                         </template>
                     </Column>
-                    <Column field="fullname" header="Ф.И.Ш" sortable style="min-width: 4rem"></Column>
-                    <Column field="phone_number" header="Телефон" sortable style="min-width: 4rem"></Column>
-                    <Column field="rank_name" header="Унвон" sortable style="min-width: 4rem"></Column>
-                    <Column field="type" header="Қуролланган" sortable>
+                    <Column field="fullname" :header="$t('full_name')" sortable style="min-width: 4rem"></Column>
+                    <Column field="phone_number" :header="$t('phone')" sortable style="min-width: 4rem"></Column>
+                    <Column field="rank_name" :header="$t('rank')" sortable style="min-width: 4rem"></Column>
+                    <Column field="type" :header="$t('armed')" sortable>
                         <template #body="slotProps">
                             <div v-if="slotProps.data.weapon_status == false"
                                 class="w-12 h-9 flex items-center justify-center bg-green-500 dark:bg-green-800 text-white rounded-lg mr-4 shrink-0 cursor-pointer">
