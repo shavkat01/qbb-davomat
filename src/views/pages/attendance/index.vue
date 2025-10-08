@@ -190,7 +190,7 @@ const isDarkMode = computed(() => document.documentElement.classList.contains('a
 
 
 const rowClass = (data) => {
-    const mode = isDarkMode.value ? 'darkMode' : 'lightMode';
+    const mode = isDarkMode.value ? 'lightMode' : 'lightMode';
     const typeClass = themeColors[mode][data.type];
     return typeClass || ''; // Fallback to empty string if type doesn't match
 };
